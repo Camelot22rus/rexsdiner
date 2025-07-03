@@ -38,8 +38,6 @@ export const PizzaBlock: React.FC<PizzaBlockProps> = ({
       title,
       price,
       imageUrl,
-      type: typeNames[activeType],
-      size: sizes[activeSize],
       count: 0,
     };
     dispatch(addItem(item));
@@ -48,11 +46,11 @@ export const PizzaBlock: React.FC<PizzaBlockProps> = ({
   return (
     <div className="pizza-block-wrapper">
       <div className="pizza-block">
-        <Link key={id} to={`/pizza/${id}`}>
-          <img className="pizza-block__image" src={imageUrl} alt="Pizza" />
+        {/* <Link key={id} to={`/pizza/${id}`}> */}
+          <img className="pizza-block__image" src="https://static.wikia.nocookie.net/la-creme-rp/images/a/a8/Logo_Rex%27s_Diner.png" alt="Pizza" />
           <h4 className="pizza-block__title">{title}</h4>
-        </Link>
-        <div className="pizza-block__selector">
+        {/* </Link> */}
+        {/* <div className="pizza-block__selector">
           <ul>
             {types.map((typeId) => (
               <li
@@ -73,9 +71,9 @@ export const PizzaBlock: React.FC<PizzaBlockProps> = ({
               </li>
             ))}
           </ul>
-        </div>
+        </div> */}
         <div className="pizza-block__bottom">
-          <div className="pizza-block__price">от {price} ₽</div>
+          <div className="pizza-block__price">{price}$</div>
           <button onClick={onClickAdd} className="button button--outline button--add">
             <svg
               width="12"

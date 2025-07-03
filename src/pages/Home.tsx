@@ -102,19 +102,19 @@ const Home: React.FC = () => {
     <div className="container">
       <div className="content__top">
         <Categories value={categoryId} onChangeCategory={onChangeCategory} />
-        <Sort value={sort} />
+        {/* <Sort value={sort} /> */}
       </div>
-      <h2 className="content__title">Все пиццы</h2>
+      <h2 className="content__title">Меню</h2>
       {status === 'error' ? (
         <div className="content__error-info">
           <h2>Произошла ошибка 😕</h2>
-          <p>К сожалению, не удалось получить питсы. Попробуйте повторить попытку позже.</p>
+          <p>К сожалению, не удалось получить меню. Попробуйте повторить попытку позже.</p>
         </div>
       ) : (
         <div className="content__items">{status === 'loading' ? skeletons : pizzas}</div>
       )}
 
-      <Pagination currentPage={currentPage} onChangePage={onChangePage} />
+      {/* <Pagination currentPage={currentPage} onChangePage={onChangePage} /> */}
     </div>
   );
 };

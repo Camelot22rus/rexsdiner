@@ -2,7 +2,7 @@
 
 .header {
   border-bottom: 1px solid $gray-line;
-  padding: 40px 0;
+  padding: 0px 0;
 
   .container {
     display: flex;
@@ -20,6 +20,7 @@
 
   &__logo {
     display: flex;
+    align-items: center;
 
     img {
       margin-right: 15px;

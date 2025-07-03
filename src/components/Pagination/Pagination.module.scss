@@ -7,15 +7,15 @@
       width: 45px;
       line-height: 42px;
       height: 45px;
-      border: 1px solid #fe5f1e;
+      border: 1px solid #22dace;
       border-radius: 30px;
       margin-right: 10px;
       cursor: pointer;
       display: inline-block;
-      color: #fe5f1e;
+      color: #22dace;
 
       &:hover {
-        background-color: #fe5f1e;
+        background-color: #22dace;
         color: #fff;
       }
     }
@@ -24,7 +24,7 @@
   :global {
     .selected {
       a {
-        background-color: #fe5f1e;
+        background-color: #22dace;
         color: #fff;
       }
     }

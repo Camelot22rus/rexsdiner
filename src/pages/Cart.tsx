@@ -99,12 +99,12 @@ const Cart: React.FC = () => {
         <div className="cart__bottom">
           <div className="cart__bottom-details">
             <span>
-              {' '}
-              Всего пицц: <b>{totalCount} шт.</b>{' '}
+              {/* {' '}
+              Всего пицц: <b>{totalCount} шт.</b>{' '} */}
             </span>
             <span>
               {' '}
-              Сумма заказа: <b>{totalPrice} ₽</b>{' '}
+              Сумма заказа: <b>{totalPrice} $</b>{' '}
             </span>
           </div>
           <div className="cart__bottom-buttons">
@@ -126,7 +126,7 @@ const Cart: React.FC = () => {
               <span>Вернуться назад</span>
             </Link>
             <div className="button pay-btn">
-              <span>Оплатить сейчас</span>
+              <span>Оформить заказ</span>
             </div>
           </div>
         </div>
