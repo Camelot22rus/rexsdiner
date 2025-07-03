@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.css": "/rexsdiner/static/css/main.731c1f1d.css",
+    "main.js": "/rexsdiner/static/js/main.e054cfc8.js",
+    "Cart.js": "/rexsdiner/static/js/Cart.7c76c702.chunk.js",
+    "FullPizza.js": "/rexsdiner/static/js/FullPizza.038bea55.chunk.js",
+    "NotFound.js": "/rexsdiner/static/js/NotFound.75130bcb.chunk.js",
+    "static/media/rex-logo.png": "/rexsdiner/static/media/rex-logo.1123837a41fcfaa4c9b0.png",
+    "static/media/empty-cart.png": "/rexsdiner/static/media/empty-cart.db905d1f4b063162f25b.png",
+    "index.html": "/rexsdiner/index.html",
+    "main.731c1f1d.css.map": "/rexsdiner/static/css/main.731c1f1d.css.map",
+    "main.e054cfc8.js.map": "/rexsdiner/static/js/main.e054cfc8.js.map",
+    "Cart.7c76c702.chunk.js.map": "/rexsdiner/static/js/Cart.7c76c702.chunk.js.map",
+    "FullPizza.038bea55.chunk.js.map": "/rexsdiner/static/js/FullPizza.038bea55.chunk.js.map",
+    "NotFound.75130bcb.chunk.js.map": "/rexsdiner/static/js/NotFound.75130bcb.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.731c1f1d.css",
+    "static/js/main.e054cfc8.js"
+  ]
+}
