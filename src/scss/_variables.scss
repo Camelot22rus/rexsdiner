@@ -3,6 +3,26 @@ $background: #ffdf8c;
 $gray-line: #f6f6f6;
 $orange: #22dace;
 
+// Dark theme colors
+$dark-bg: #1a1a1a;
+$dark-surface: #2d2d2d;
+$dark-text: #ffffff;
+$dark-text-secondary: #b3b3b3;
+$dark-border: #404040;
+
+// Light theme colors
+$light-bg: #ffffff;
+$light-surface: #ffffff;
+$light-text: #232323;
+$light-text-secondary: #666666;
+$light-border: #f6f6f6;
+
+// Responsive breakpoints
+$mobile: 480px;
+$tablet: 768px;
+$desktop: 1024px;
+$large-desktop: 1200px;
+
 $container-width: 90%;
 
 $duration: 0.15s;

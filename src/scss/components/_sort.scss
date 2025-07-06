@@ -1,4 +1,4 @@
-@import '../variables';
+@import "../variables";
 
 .sort {
   position: relative;
@@ -8,16 +8,25 @@
 
     svg {
       margin-right: 8px;
+      fill: var(--text-color);
+      transition: fill $duration ease;
     }
 
     b {
       margin-right: 8px;
+      color: var(--text-color);
+      transition: color $duration ease;
     }
 
     span {
-      color: $orange;
-      border-bottom: 1px dashed $orange;
+      color: var(--accent-color);
+      border-bottom: 1px dashed var(--accent-color);
       cursor: pointer;
+      transition: all $duration ease;
+
+      &:hover {
+        opacity: 0.8;
+      }
     }
   }
 
@@ -25,26 +34,30 @@
     position: absolute;
     right: 0;
     margin-top: 15px;
-    background: #ffffff;
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.09);
     border-radius: 10px;
     overflow: hidden;
     padding: 10px 0;
+    transition: all $duration ease;
 
     ul {
       overflow: hidden;
       li {
         padding: 12px 20px;
         cursor: pointer;
+        color: var(--text-color);
+        transition: all $duration ease;
 
         &.active,
         &:hover {
-          background: rgba(254, 95, 30, 0.05);
+          background: rgba(34, 218, 206, 0.1);
         }
 
         &.active {
           font-weight: bold;
-          color: $orange;
+          color: var(--accent-color);
         }
       }
     }

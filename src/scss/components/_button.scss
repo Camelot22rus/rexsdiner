@@ -1,14 +1,14 @@
-@import '../variables';
+@import "../variables";
 
 .button {
   display: inline-block;
-  background-color: $orange;
+  background-color: var(--accent-color);
   border-radius: 30px;
   padding: 10px 20px;
   min-width: 100px;
   text-align: center;
   cursor: pointer;
-  transition: background-color $duration ease-in-out, border-color $duration ease-in-out;
+  transition: all $duration ease-in-out;
   border: 1px solid transparent;
   @include noselect();
 
@@ -26,11 +26,14 @@
 
   &:hover {
     background-color: darken($orange, 8%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(34, 218, 206, 0.3);
   }
 
   &:active {
     background-color: darken($orange, 12%);
     transform: translateY(1px);
+    box-shadow: none;
   }
 
   &--circle {
@@ -45,30 +48,31 @@
   }
 
   &--black {
-    background-color: $black;
+    background-color: var(--text-color);
+    color: var(--surface-color);
 
     &:hover,
     &:active {
-      background-color: lighten($color: $black, $amount: 10);
+      background-color: var(--text-secondary);
     }
   }
 
   &--outline {
-    background-color: #fff;
-    border-color: $orange;
+    background-color: var(--surface-color);
+    border-color: var(--accent-color);
     &,
     span {
-      color: $orange;
+      color: var(--accent-color);
     }
 
     svg {
       path {
-        fill: $orange;
+        fill: var(--accent-color);
       }
     }
 
     &:hover {
-      background-color: $orange;
+      background-color: var(--accent-color);
 
       &,
       span {
@@ -108,14 +112,14 @@
     &:hover {
       i {
         background-color: #fff;
-        color: $orange;
+        color: var(--accent-color);
       }
     }
 
     i {
       display: inline-block;
       border-radius: 30px;
-      background-color: $orange;
+      background-color: var(--accent-color);
       color: #fff;
       font-weight: 600;
       width: 22px;
