@@ -1,29 +1,56 @@
-@import '../variables';
+@import "../variables";
 
 .categories {
+  width: 100%;
+
   ul {
     display: flex;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    @media (min-width: 768px) {
+      gap: 10px;
+    }
 
     li {
-      background-color: #f9f9f9;
-      padding: 13px 30px;
-      border-radius: 30px;
-      margin-right: 10px;
+      background-color: var(--border-color);
+      color: var(--text-color);
+      padding: 8px 16px;
+      border-radius: 20px;
       font-weight: bold;
       cursor: pointer;
-      transition: background-color 0.1s ease-in-out;
+      transition: all 0.1s ease-in-out;
+      white-space: nowrap;
+      font-size: 12px;
       @include noselect();
 
+      @media (min-width: 480px) {
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 14px;
+      }
+
+      @media (min-width: 768px) {
+        padding: 13px 30px;
+        border-radius: 30px;
+        font-size: 16px;
+      }
+
       &:hover {
-        background-color: darken(#f9f9f9, 2%);
+        background-color: var(--text-secondary);
+        color: var(--surface-color);
+        transform: translateY(-1px);
       }
 
       &:active {
-        background-color: darken(#f9f9f9, 5%);
+        transform: translateY(0);
       }
 
       &.active {
-        background-color: #282828;
+        background-color: var(--accent-color);
         color: #fff;
       }
     }

@@ -1,40 +1,63 @@
 .root {
   position: relative;
-  left: -120px;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    width: 400px;
+  }
 }
 
 .input {
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+  background-color: var(--surface-color);
+  color: var(--text-color);
   padding: 12px 20px;
   padding-left: 42px;
-  width: 400px;
+  width: 100%;
   border-radius: 10px;
   font-size: 16px;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+
+  @media (min-width: 768px) {
+    width: 400px;
+  }
+
+  &::placeholder {
+    color: var(--text-secondary);
+  }
 
   &:focus {
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--accent-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(34, 218, 206, 0.1);
   }
 }
 
 .icon {
   width: 22px;
   height: 22px;
-  opacity: 0.3;
+  opacity: 0.5;
   position: absolute;
   left: 14px;
   top: 12px;
+  fill: var(--text-secondary);
+  transition: fill 0.15s ease;
 }
 
 .clearIcon {
   width: 18px;
   height: 18px;
-  opacity: 0.3;
+  opacity: 0.5;
   position: absolute;
   right: 15px;
   top: 15px;
   cursor: pointer;
+  fill: var(--text-secondary);
+  transition: all 0.15s ease;
 
   &:hover {
     opacity: 0.8;
+    fill: var(--text-color);
   }
 }
