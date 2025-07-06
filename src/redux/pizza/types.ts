@@ -6,12 +6,21 @@ export type Pizza = {
   sizes: number[];
   types: number[];
   rating: number;
+  comboComponents?: string[];
+};
+
+export type MenuItem = {
+  id: number;
+  name: string;
+  categorie: string;
+  price: number;
+  comboComponents: string[];
 };
 
 export enum Status {
-  LOADING = 'loading',
-  SUCCESS = 'completed',
-  ERROR = 'error',
+  LOADING = "loading",
+  SUCCESS = "completed",
+  ERROR = "error",
 }
 
 export type SearchPizzaParams = {
@@ -24,5 +33,10 @@ export type SearchPizzaParams = {
 
 export interface PizzaSliceState {
   items: Pizza[];
+  status: Status;
+}
+
+export interface MenuSliceState {
+  items: MenuItem[];
   status: Status;
 }

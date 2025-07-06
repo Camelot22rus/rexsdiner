@@ -1,0 +1,248 @@
+[
+  {
+    "id": 1,
+    "name": "Boba tea",
+    "categorie": "Напитки",
+    "price": 50,
+    "comboComponents": []
+  },
+  {
+    "id": 2,
+    "name": "Rex’s cola",
+    "categorie": "Напитки",
+    "price": 65,
+    "comboComponents": []
+  },
+  {
+    "id": 3,
+    "name": "Американо с молоком",
+    "categorie": "Напитки",
+    "price": 25,
+    "comboComponents": []
+  },
+  {
+    "id": 4,
+    "name": "Капучино / Латте",
+    "categorie": "Напитки",
+    "price": 25,
+    "comboComponents": []
+  },
+  {
+    "id": 5,
+    "name": "Эспрессо",
+    "categorie": "Напитки",
+    "price": 20,
+    "comboComponents": []
+  },
+  {
+    "id": 6,
+    "name": "Медовый раф с молоком",
+    "categorie": "Напитки",
+    "price": 40,
+    "comboComponents": []
+  },
+  {
+    "id": 7,
+    "name": "Какао",
+    "categorie": "Напитки",
+    "price": 45,
+    "comboComponents": []
+  },
+  {
+    "id": 8,
+    "name": "Пунш киви-личи",
+    "categorie": "Напитки",
+    "price": 60,
+    "comboComponents": []
+  },
+  {
+    "id": 9,
+    "name": "Молочные коктейли",
+    "categorie": "Напитки",
+    "price": 50,
+    "comboComponents": []
+  },
+  {
+    "id": 10,
+    "name": "Витаминный смузи",
+    "categorie": "Напитки",
+    "price": 65,
+    "comboComponents": []
+  },
+  {
+    "id": 11,
+    "name": "Сок в ассортименте",
+    "categorie": "Напитки",
+    "price": 20,
+    "comboComponents": []
+  },
+  {
+    "id": 12,
+    "name": "Омлет",
+    "categorie": "Завтраки",
+    "price": 30,
+    "comboComponents": []
+  },
+  {
+    "id": 13,
+    "name": "Яичница с беконом",
+    "categorie": "Завтраки",
+    "price": 30,
+    "comboComponents": []
+  },
+  {
+    "id": 14,
+    "name": "Тост с Джемом",
+    "categorie": "Завтраки",
+    "price": 25,
+    "comboComponents": []
+  },
+  {
+    "id": 15,
+    "name": "Американский завтрак",
+    "categorie": "Завтраки",
+    "price": 65,
+    "comboComponents": []
+  },
+  {
+    "id": 16,
+    "name": "Bacon Mac&Cheese",
+    "categorie": "Завтраки",
+    "price": 50,
+    "comboComponents": []
+  },
+  {
+    "id": 17,
+    "name": "Rex’s Sandwich",
+    "categorie": "Завтраки",
+    "price": 70,
+    "comboComponents": []
+  },
+  {
+    "id": 18,
+    "name": "Хрустящая закуска под пиво",
+    "categorie": "Основные блюда и закуски",
+    "price": 20,
+    "comboComponents": []
+  },
+  {
+    "id": 19,
+    "name": "Бургер Сердцедав",
+    "categorie": "Основные блюда и закуски",
+    "price": 80,
+    "comboComponents": []
+  },
+  {
+    "id": 20,
+    "name": "Стейк из говядины",
+    "categorie": "Основные блюда и закуски",
+    "price": 70,
+    "comboComponents": []
+  },
+  {
+    "id": 21,
+    "name": "Стейк из кролика",
+    "categorie": "Основные блюда и закуски",
+    "price": 40,
+    "comboComponents": []
+  },
+  {
+    "id": 22,
+    "name": "Тыква с овощами",
+    "categorie": "Основные блюда и закуски",
+    "price": 35,
+    "comboComponents": []
+  },
+  {
+    "id": 23,
+    "name": "Банановый сплит",
+    "categorie": "Десерты",
+    "price": 55,
+    "comboComponents": []
+  },
+  {
+    "id": 24,
+    "name": "Вафли с кленовым сиропом",
+    "categorie": "Десерты",
+    "price": 65,
+    "comboComponents": []
+  },
+  {
+    "id": 25,
+    "name": "Яблочный пирог с мороженым",
+    "categorie": "Десерты",
+    "price": 110,
+    "comboComponents": []
+  },
+  {
+    "id": 26,
+    "name": "Фруктовый салат",
+    "categorie": "Десерты",
+    "price": 35,
+    "comboComponents": []
+  },
+  {
+    "id": 27,
+    "name": "Сырный суп по-французски",
+    "categorie": "Супы",
+    "price": 75,
+    "comboComponents": []
+  },
+  {
+    "id": 28,
+    "name": "Грибной суп по-французски",
+    "categorie": "Супы",
+    "price": 60,
+    "comboComponents": []
+  },
+  {
+    "id": 29,
+    "name": "Цезарь с курицей",
+    "categorie": "Салаты",
+    "price": 50,
+    "comboComponents": []
+  },
+  {
+    "id": 30,
+    "name": "Цезарь с креветкой",
+    "categorie": "Салаты",
+    "price": 55,
+    "comboComponents": []
+  },
+  {
+    "id": 31,
+    "name": "Пиво в ассортименте",
+    "categorie": "Бар",
+    "price": 20,
+    "comboComponents": []
+  },
+  {
+    "id": 100,
+    "name": "Хищный",
+    "categorie": "Комбо",
+    "price": 170,
+    "comboComponents": ["Стейк из говядины", "Bacon Mac&Cheese", "Rex’s cola"]
+  },
+  {
+    "id": 101,
+    "name": "Травоядный",
+    "categorie": "Комбо",
+    "price": 120,
+    "comboComponents": [
+      "Тыква с овощами",
+      "Фруктовый салат",
+      "Витаминный смузи"
+    ]
+  },
+  {
+    "id": 102,
+    "name": "Раптор",
+    "categorie": "Комбо",
+    "price": 195,
+    "comboComponents": [
+      "Rex’s Sandwich",
+      "Сырный суп по-французски",
+      "Rex’s cola"
+    ]
+  }
+]

@@ -3,6 +3,8 @@ import filter from "./filter/slice";
 import cart from "./cart/slice";
 import pizza from "./pizza/slice";
 import theme from "./theme/slice";
+import orders from "./orders/slice";
+import menu from "./menu/slice";
 import { useDispatch } from "react-redux";
 
 export const store = configureStore({
@@ -11,6 +13,8 @@ export const store = configureStore({
     cart,
     pizza,
     theme,
+    orders,
+    menu,
   },
 });
 
