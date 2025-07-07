@@ -742,20 +742,25 @@
 
 .date-separator-info {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.date-separator-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-color);
-  margin: 0;
+  flex-direction: column;
+  gap: 12px;
 
   @media (min-width: 768px) {
-    font-size: 20px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.date-separator-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+
+  @media (min-width: 768px) {
+    flex: 1;
   }
 }
 
@@ -769,6 +774,112 @@
     flex-direction: row;
     align-items: center;
     gap: 16px;
+  }
+}
+
+.date-separator-mobile-copy {
+  display: flex;
+  justify-content: center;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.date-separator-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-color);
+  margin: 0;
+
+  @media (min-width: 768px) {
+    font-size: 20px;
+  }
+}
+
+.date-copy-btn {
+  background: none;
+  border: 1px solid var(--accent-color);
+  border-radius: 4px;
+  color: var(--accent-color);
+  cursor: pointer;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 500;
+  min-height: 36px;
+
+  @media (min-width: 768px) {
+    padding: 6px;
+    border-radius: 6px;
+    min-width: 32px;
+    height: 32px;
+    font-size: 0;
+    gap: 0;
+    margin-left: 8px;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background-color: var(--accent-color);
+    color: white;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &.copied {
+    background-color: var(--success-color, #10b981);
+    border-color: var(--success-color, #10b981);
+    color: white;
+
+    svg {
+      animation: checkmark 0.3s ease;
+    }
+  }
+
+  svg {
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+
+    @media (min-width: 768px) {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  .copy-btn-text {
+    @media (min-width: 768px) {
+      display: none;
+    }
+  }
+
+  // Hide mobile copy button in desktop stats
+  &.desktop-copy {
+    display: none;
+
+    @media (min-width: 768px) {
+      display: flex;
+    }
+  }
+}
+
+@keyframes checkmark {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 
@@ -887,8 +998,48 @@
   }
 
   .date-separator-stats {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    // Stack vertically on very small screens
+    @media (max-width: 400px) {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  .date-copy-btn {
+    margin-left: 0;
+    margin-top: 0;
+    padding: 10px;
+    min-width: 36px;
+    height: 36px;
+    border-radius: 6px;
+
+    // Make it more touch-friendly on mobile
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.95);
+      background-color: var(--accent-color);
+      color: white;
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    // On very small screens, make it even more prominent
+    @media (max-width: 400px) {
+      margin-top: 8px;
+      align-self: flex-start;
+    }
   }
 
   .date-total-count {

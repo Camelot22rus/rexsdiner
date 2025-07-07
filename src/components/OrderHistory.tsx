@@ -82,6 +82,85 @@ const OrderHistory: React.FC = () => {
     return dayOrders.reduce((sum, order) => sum + order.totalCount, 0);
   };
 
+  const generateDiscordMessage = (date: string, dayOrders: typeof orders) => {
+    const dayTotal = calculateDayTotal(dayOrders);
+    const dayCount = calculateDayCount(dayOrders);
+    const dayThirtyPercent = calculateDayThirtyPercent(dayOrders);
+    const daySeventyPercent = calculateDaySeventyPercent(dayOrders);
+
+    let message = `**📊 Отчет за ${date}**\n\n`;
+
+    dayOrders.forEach((order) => {
+      message += `**Заказ #${order.id}** (${formatDate(order.timestamp)})\n`;
+
+      order.items.forEach((item) => {
+        message += `• ${item.title} - ${item.count}x по ${item.price}$ = ${
+          item.price * item.count
+        }$\n`;
+      });
+
+      message += `**Итого заказа:** ${order.totalPrice}$ (${order.totalCount} позиций)\n`;
+      message += `30%: ${order.thirtyPercent}$ | 70%: ${order.seventyPercent}$\n\n`;
+    });
+
+    message += `**🔥 ИТОГО ЗА ДЕНЬ:**\n`;
+    message += `💰 Общая сумма: **${dayTotal}$**\n`;
+    message += `📦 Всего позиций: **${dayCount}**\n`;
+    message += `💵 30%: **${dayThirtyPercent}$**\n`;
+    message += `💰 70%: **${daySeventyPercent}$**`;
+
+    return message;
+  };
+
+  const copyToClipboard = async (date: string, dayOrders: typeof orders) => {
+    try {
+      const message = generateDiscordMessage(date, dayOrders);
+      await navigator.clipboard.writeText(message);
+
+      // Show success feedback on both buttons
+      const dateKey = date.replace(/\./g, "-");
+      const desktopButton = document.getElementById(
+        `copy-btn-desktop-${dateKey}`
+      );
+      const mobileButton = document.getElementById(
+        `copy-btn-mobile-${dateKey}`
+      );
+
+      const showSuccess = (button: HTMLElement | null) => {
+        if (button) {
+          const originalHTML = button.innerHTML;
+          button.classList.add("copied");
+          button.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            ${
+              button.classList.contains("desktop-copy")
+                ? ""
+                : '<span class="copy-btn-text">Скопировано!</span>'
+            }
+          `;
+          setTimeout(() => {
+            button.classList.remove("copied");
+            button.innerHTML = originalHTML;
+          }, 2000);
+        }
+      };
+
+      showSuccess(desktopButton);
+      showSuccess(mobileButton);
+    } catch (err) {
+      console.error("Failed to copy to clipboard:", err);
+      // Fallback for older browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = generateDiscordMessage(date, dayOrders);
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+    }
+  };
+
   const groupedOrders = groupOrdersByDate();
   const sortedDates = Object.keys(groupedOrders).sort((a, b) => {
     return (
@@ -159,12 +238,68 @@ const OrderHistory: React.FC = () => {
                   <div key={date} className="order-day-group">
                     <div className="order-date-separator">
                       <div className="date-separator-info">
-                        <h3 className="date-separator-title">{date}</h3>
-                        <div className="date-separator-stats">
-                          <span className="date-total-count">
-                            {dayCount} позиций
-                          </span>
-                          <span className="date-total-price">{dayTotal} $</span>
+                        <div className="date-separator-top">
+                          <h3 className="date-separator-title">{date}</h3>
+                          <div className="date-separator-stats">
+                            <span className="date-total-count">
+                              {dayCount} позиций
+                            </span>
+                            <span className="date-total-price">
+                              {dayTotal} $
+                            </span>
+                            <button
+                              id={`copy-btn-desktop-${date.replace(
+                                /\./g,
+                                "-"
+                              )}`}
+                              className="date-copy-btn desktop-copy"
+                              onClick={() => copyToClipboard(date, dayOrders)}
+                              title="Скопировать отчет за день для отправки в Discord"
+                            >
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M16 4H18C19.1046 4 20 4.89543 20 6V20C20 21.1046 19.1046 22 18 22H6C4.89543 22 4 21.1046 4 20V6C4 4.89543 4.89543 4 6 4H8M16 4C16 2.89543 15.1046 2 14 2H10C8.89543 2 8 2.89543 8 4M16 4C16 5.10457 15.1046 6 14 6H10C8.89543 6 8 5.10457 8 4"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                        <div className="date-separator-mobile-copy">
+                          <button
+                            id={`copy-btn-mobile-${date.replace(/\./g, "-")}`}
+                            className="date-copy-btn"
+                            onClick={() => copyToClipboard(date, dayOrders)}
+                            title="Скопировать отчет за день для отправки в Discord"
+                          >
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M16 4H18C19.1046 4 20 4.89543 20 6V20C20 21.1046 19.1046 22 18 22H6C4.89543 22 4 21.1046 4 20V6C4 4.89543 4.89543 4 6 4H8M16 4C16 2.89543 15.1046 2 14 2H10C8.89543 2 8 2.89543 8 4M16 4C16 5.10457 15.1046 6 14 6H10C8.89543 6 8 5.10457 8 4"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                            <span className="copy-btn-text">
+                              Скопировать отчет
+                            </span>
+                          </button>
                         </div>
                       </div>
                       <div className="date-separator-breakdown">
