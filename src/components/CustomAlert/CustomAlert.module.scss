@@ -1,0 +1,116 @@
+.customAlertOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease-in;
+}
+
+.customAlert {
+  background-color: var(--surface-color);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 400px;
+  width: 90%;
+  margin: 0 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: slideIn 0.3s ease-out;
+  border: 1px solid var(--border-color);
+
+  &__content {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    background-color: var(--accent-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-top: 2px;
+  }
+
+  &__message {
+    flex: 1;
+    margin: 0;
+    color: var(--text-color);
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 500;
+  }
+
+  &__closeBtn {
+    width: 100%;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+
+    &:hover {
+      background-color: #1bc7bb;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(34, 218, 206, 0.3);
+    }
+
+    &:active {
+      background-color: #19b3a8;
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(34, 218, 206, 0.3);
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// Dark theme support
+[data-theme="dark"] {
+  .custom-alert {
+    background-color: var(--dark-surface);
+    border-color: var(--dark-border);
+
+    &__message {
+      color: var(--dark-text);
+    }
+  }
+}

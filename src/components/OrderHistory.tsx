@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { selectOrders } from "../redux/orders/selectors";
 import { selectPizzaData } from "../redux/pizza/selectors";
 import { setOrderHistoryOpen, clearOrders } from "../redux/orders/slice";
+import CustomConfirm from "./CustomConfirm";
 
 const OrderHistory: React.FC = () => {
   const dispatch = useDispatch();
@@ -11,6 +12,7 @@ const OrderHistory: React.FC = () => {
   const [expandedComponents, setExpandedComponents] = React.useState<
     string | null
   >(null);
+  const [isConfirmVisible, setIsConfirmVisible] = React.useState(false);
 
   React.useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -28,13 +30,16 @@ const OrderHistory: React.FC = () => {
   };
 
   const handleClearOrders = () => {
-    if (
-      window.confirm(
-        "Вы уверены, что хотите удалить всю историю заказов? Это действие нельзя отменить."
-      )
-    ) {
-      dispatch(clearOrders());
-    }
+    setIsConfirmVisible(true);
+  };
+
+  const confirmClearOrders = () => {
+    dispatch(clearOrders());
+    setIsConfirmVisible(false);
+  };
+
+  const cancelClearOrders = () => {
+    setIsConfirmVisible(false);
   };
 
   const formatDate = (timestamp: string) => {
@@ -491,6 +496,13 @@ const OrderHistory: React.FC = () => {
           )}
         </div>
       </div>
+
+      <CustomConfirm
+        message="Вы уверены, что хотите удалить всю историю заказов? Это действие нельзя отменить."
+        isVisible={isConfirmVisible}
+        onConfirm={confirmClearOrders}
+        onCancel={cancelClearOrders}
+      />
     </div>
   );
 };

@@ -12,7 +12,7 @@ import {
 import { addOrder, toggleOrderHistory } from "../redux/orders/slice";
 import { fetchPizzasFromJSON } from "../redux/pizza/asyncActions";
 import { useAppDispatch } from "../redux/store";
-import { OrderHistory } from "../components";
+import { OrderHistory, CustomAlert } from "../components";
 import { getNextOrderNumber } from "../utils/getOrdersFromLS";
 
 const Employee: React.FC = () => {
@@ -24,6 +24,8 @@ const Employee: React.FC = () => {
 
   const [searchValue, setSearchValue] = React.useState("");
   const [isBottomBarCollapsed, setIsBottomBarCollapsed] = React.useState(true);
+  const [alertMessage, setAlertMessage] = React.useState("");
+  const [isAlertVisible, setIsAlertVisible] = React.useState(false);
 
   const totalCount = cartItems.reduce(
     (sum: number, item: any) => sum + item.count,
@@ -119,9 +121,11 @@ const Employee: React.FC = () => {
       // Add order to history
       dispatch(addOrder(order));
 
-      alert(
+      // Show custom alert
+      setAlertMessage(
         `Заказ #${orderNumber} на сумму ${totalPrice} $ (${totalCount} позиций) добавлен в систему!`
       );
+      setIsAlertVisible(true);
 
       // Clear the cart for the next order
       dispatch(clearItems());
@@ -130,6 +134,11 @@ const Employee: React.FC = () => {
 
   const toggleBottomBar = () => {
     setIsBottomBarCollapsed(!isBottomBarCollapsed);
+  };
+
+  const closeAlert = () => {
+    setIsAlertVisible(false);
+    setAlertMessage("");
   };
 
   return (
@@ -339,6 +348,13 @@ const Employee: React.FC = () => {
 
       {/* Order History Modal */}
       {isOrderHistoryOpen && <OrderHistory />}
+
+      {/* Custom Alert */}
+      <CustomAlert
+        message={alertMessage}
+        isVisible={isAlertVisible}
+        onClose={closeAlert}
+      />
     </div>
   );
 };
