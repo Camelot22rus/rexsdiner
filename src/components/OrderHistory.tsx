@@ -1,11 +1,16 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectOrders } from "../redux/orders/selectors";
+import { selectPizzaData } from "../redux/pizza/selectors";
 import { setOrderHistoryOpen, clearOrders } from "../redux/orders/slice";
 
 const OrderHistory: React.FC = () => {
   const dispatch = useDispatch();
   const orders = useSelector(selectOrders);
+  const { items: menuItems } = useSelector(selectPizzaData);
+  const [expandedComponents, setExpandedComponents] = React.useState<
+    string | null
+  >(null);
 
   React.useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -87,6 +92,7 @@ const OrderHistory: React.FC = () => {
     const dayCount = calculateDayCount(dayOrders);
     const dayThirtyPercent = calculateDayThirtyPercent(dayOrders);
     const daySeventyPercent = calculateDaySeventyPercent(dayOrders);
+    const components = generateComponentsList(date, dayOrders);
 
     let message = `**📊 Отчет за ${date}**\n\n`;
 
@@ -107,9 +113,47 @@ const OrderHistory: React.FC = () => {
     message += `💰 Общая сумма: **${dayTotal}$**\n`;
     message += `📦 Всего позиций: **${dayCount}**\n`;
     message += `💵 30%: **${dayThirtyPercent}$**\n`;
-    message += `💰 70%: **${daySeventyPercent}$**`;
+    message += `💰 70%: **${daySeventyPercent}$**\n\n`;
+
+    // Add components section
+    const componentEntries = Object.entries(components).sort(([a], [b]) =>
+      a.localeCompare(b)
+    );
+    if (componentEntries.length > 0) {
+      message += `**📋 НЕОБХОДИМЫЕ КОМПОНЕНТЫ:**\n`;
+      componentEntries.forEach(([componentName, amount]) => {
+        message += `• ${componentName}: **${amount}**\n`;
+      });
+    }
 
     return message;
+  };
+
+  const generateComponentsList = (date: string, dayOrders: typeof orders) => {
+    const componentCounts: { [key: string]: number } = {};
+
+    for (const order of dayOrders) {
+      for (const cartItem of order.items) {
+        const menuItem = menuItems.find(
+          (item) => item.id.toString() === cartItem.id
+        );
+        if (menuItem?.components) {
+          for (const component of menuItem.components) {
+            const componentName = component.name;
+            const amount = component.amount * cartItem.count;
+
+            componentCounts[componentName] =
+              (componentCounts[componentName] || 0) + amount;
+          }
+        }
+      }
+    }
+
+    return componentCounts;
+  };
+
+  const toggleComponentsDisplay = (dateKey: string) => {
+    setExpandedComponents(expandedComponents === dateKey ? null : dateKey);
   };
 
   const copyToClipboard = async (date: string, dayOrders: typeof orders) => {
@@ -248,6 +292,31 @@ const OrderHistory: React.FC = () => {
                               {dayTotal} $
                             </span>
                             <button
+                              className="date-components-btn"
+                              onClick={() =>
+                                toggleComponentsDisplay(
+                                  date.replace(/\./g, "-")
+                                )
+                              }
+                              title="Показать необходимые компоненты"
+                            >
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M9 11H15M9 15H15M17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H12.5858C12.851 3 13.1054 3.10536 13.2929 3.29289L19.7071 9.70711C19.8946 9.89464 20 10.149 20 10.4142V19C20 20.1046 19.1046 21 18 21H17ZM17 21V11H13V7H7V19H17Z"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            </button>
+                            <button
                               id={`copy-btn-desktop-${date.replace(
                                 /\./g,
                                 "-"
@@ -276,6 +345,32 @@ const OrderHistory: React.FC = () => {
                         </div>
                         <div className="date-separator-mobile-copy">
                           <button
+                            className="date-components-btn-mobile"
+                            onClick={() =>
+                              toggleComponentsDisplay(date.replace(/\./g, "-"))
+                            }
+                            title="Показать необходимые компоненты"
+                          >
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M9 11H15M9 15H15M17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H12.5858C12.851 3 13.1054 3.10536 13.2929 3.29289L19.7071 9.70711C19.8946 9.89464 20 10.149 20 10.4142V19C20 20.1046 19.1046 21 18 21H17ZM17 21V11H13V7H7V19H17Z"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
+                            <span className="components-btn-text">
+                              Ингредиенты
+                            </span>
+                          </button>
+                          <button
                             id={`copy-btn-mobile-${date.replace(/\./g, "-")}`}
                             className="date-copy-btn"
                             onClick={() => copyToClipboard(date, dayOrders)}
@@ -296,9 +391,7 @@ const OrderHistory: React.FC = () => {
                                 strokeLinejoin="round"
                               />
                             </svg>
-                            <span className="copy-btn-text">
-                              Скопировать отчет
-                            </span>
+                            <span className="copy-btn-text">Отчет</span>
                           </button>
                         </div>
                       </div>
@@ -311,6 +404,33 @@ const OrderHistory: React.FC = () => {
                         </span>
                       </div>
                     </div>
+
+                    {expandedComponents === date.replace(/\./g, "-") && (
+                      <div className="components-display">
+                        <h4 className="components-title">
+                          Необходимые компоненты:
+                        </h4>
+                        <div className="components-list">
+                          {Object.entries(
+                            generateComponentsList(date, dayOrders)
+                          )
+                            .sort(([a], [b]) => a.localeCompare(b))
+                            .map(([componentName, amount]) => (
+                              <div
+                                key={componentName}
+                                className="component-item"
+                              >
+                                <span className="component-name">
+                                  {componentName}
+                                </span>
+                                <span className="component-amount">
+                                  {amount}
+                                </span>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    )}
 
                     {dayOrders.map((order) => (
                       <div key={order.id} className="order-history-item">

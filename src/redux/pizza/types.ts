@@ -1,12 +1,15 @@
 export type Pizza = {
   id: string;
   title: string;
+  name: string;
   price: number;
   imageUrl: string;
   sizes: number[];
   types: number[];
   rating: number;
   comboComponents?: string[];
+  categorie?: string;
+  components?: Array<{ name: string; amount: number }>;
 };
 
 export type MenuItem = {
@@ -15,6 +18,7 @@ export type MenuItem = {
   categorie: string;
   price: number;
   comboComponents: string[];
+  components: Array<{ name: string; amount: number }>;
 };
 
 export enum Status {

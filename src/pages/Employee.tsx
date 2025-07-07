@@ -51,13 +51,34 @@ const Employee: React.FC = () => {
   }, [appDispatch]);
 
   const filteredItems = items.filter((item) =>
-    item.title.toLowerCase().includes(searchValue.toLowerCase())
+    item.name.toLowerCase().includes(searchValue.toLowerCase())
   );
+
+  // Group items by category while preserving original order
+  const groupedItems = filteredItems.reduce((groups, item) => {
+    const category = item.categorie ?? "Без категории";
+    if (!groups[category]) {
+      groups[category] = [];
+    }
+    groups[category].push(item);
+    return groups;
+  }, {} as Record<string, typeof filteredItems>);
+
+  // Get category names in the order they first appear in the JSON
+  const categoryNames = [];
+  const seenCategories = new Set();
+  for (const item of filteredItems) {
+    const category = item.categorie ?? "Без категории";
+    if (!seenCategories.has(category)) {
+      seenCategories.add(category);
+      categoryNames.push(category);
+    }
+  }
 
   const onAddClick = (item: any) => {
     const cartItem = {
       id: item.id,
-      title: item.title,
+      title: item.name, // Use name from JSON as title in cart
       price: item.price,
       imageUrl: item.imageUrl,
       count: 0,
@@ -155,38 +176,47 @@ const Employee: React.FC = () => {
             {status === "loading" ? (
               <div className="loading">Загружаем продукты...</div>
             ) : (
-              filteredItems.map((item) => {
-                const itemCount = getItemCount(item.id);
-                return (
-                  <div key={item.id} className="product-item">
-                    <div className="product-item__info">
-                      <h4 className="product-item__title">{item.title}</h4>
-                      <span className="product-item__price">
-                        {item.price} $
-                      </span>
-                    </div>
-                    <div className="product-item__controls">
-                      {itemCount > 0 && (
-                        <button
-                          className="product-item__minus"
-                          onClick={() => onMinusClick(item.id)}
-                        >
-                          −
-                        </button>
-                      )}
-                      {itemCount > 0 && (
-                        <span className="product-item__count">{itemCount}</span>
-                      )}
-                      <button
-                        className="product-item__add"
-                        onClick={() => onAddClick(item)}
-                      >
-                        +
-                      </button>
-                    </div>
+              categoryNames.map((categoryName) => (
+                <div key={categoryName} className="category-section">
+                  <h3 className="category-title">{categoryName}</h3>
+                  <div className="category-items">
+                    {groupedItems[categoryName].map((item) => {
+                      const itemCount = getItemCount(item.id);
+                      return (
+                        <div key={item.id} className="product-item">
+                          <div className="product-item__info">
+                            <h4 className="product-item__title">{item.name}</h4>
+                            <span className="product-item__price">
+                              {item.price} $
+                            </span>
+                          </div>
+                          <div className="product-item__controls">
+                            {itemCount > 0 && (
+                              <button
+                                className="product-item__minus"
+                                onClick={() => onMinusClick(item.id)}
+                              >
+                                −
+                              </button>
+                            )}
+                            {itemCount > 0 && (
+                              <span className="product-item__count">
+                                {itemCount}
+                              </span>
+                            )}
+                            <button
+                              className="product-item__add"
+                              onClick={() => onAddClick(item)}
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                );
-              })
+                </div>
+              ))
             )}
           </div>
         </div>

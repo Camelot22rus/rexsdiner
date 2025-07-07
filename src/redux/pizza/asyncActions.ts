@@ -35,6 +35,7 @@ export const fetchPizzas = createAsyncThunk<Pizza[], SearchPizzaParams>(
 export const convertMenuItemToPizza = (menuItem: MenuItem): Pizza => ({
   id: menuItem.id.toString(),
   title: menuItem.name,
+  name: menuItem.name, // Add the name property
   price: menuItem.price,
   imageUrl:
     "https://via.placeholder.com/300x300.png?text=" +
@@ -43,6 +44,8 @@ export const convertMenuItemToPizza = (menuItem: MenuItem): Pizza => ({
   types: [0, 1], // Default types
   rating: 4.5, // Default rating
   comboComponents: menuItem.comboComponents,
+  categorie: menuItem.categorie, // Add the categorie property
+  components: menuItem.components, // Add the components property
 });
 
 // New async action for loading menu items from local JSON (returns MenuItem[])
