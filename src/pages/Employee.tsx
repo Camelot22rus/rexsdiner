@@ -24,10 +24,6 @@ const Employee: React.FC = () => {
 
   const [searchValue, setSearchValue] = React.useState("");
   const [isBottomBarCollapsed, setIsBottomBarCollapsed] = React.useState(true);
-  const [bottomBarHeight, setBottomBarHeight] = React.useState(250); // Default height in pixels
-  const [isResizing, setIsResizing] = React.useState(false);
-  const [startY, setStartY] = React.useState(0);
-  const [startHeight, setStartHeight] = React.useState(0);
 
   const totalCount = cartItems.reduce(
     (sum: number, item: any) => sum + item.count,
@@ -115,64 +111,6 @@ const Employee: React.FC = () => {
     setIsBottomBarCollapsed(!isBottomBarCollapsed);
   };
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault();
-
-    // Start a timer to distinguish between click and drag
-    const timer = setTimeout(() => {
-      setIsResizing(true);
-      setStartY(e.clientY);
-      setStartHeight(bottomBarHeight);
-    }, 150); // 150ms delay before starting resize
-
-    const handleQuickMouseUp = () => {
-      clearTimeout(timer);
-      if (!isResizing) {
-        // This was a quick click, toggle the bottom bar
-        toggleBottomBar();
-      }
-      document.removeEventListener("mouseup", handleQuickMouseUp);
-    };
-
-    document.addEventListener("mouseup", handleQuickMouseUp);
-  };
-
-  const handleMouseMove = React.useCallback(
-    (e: MouseEvent) => {
-      if (!isResizing) return;
-
-      const deltaY = startY - e.clientY; // Inverted because we want dragging up to increase height
-      const newHeight = Math.max(150, Math.min(600, startHeight + deltaY)); // Min 150px, max 600px
-      setBottomBarHeight(newHeight);
-    },
-    [isResizing, startY, startHeight]
-  );
-
-  const handleMouseUp = React.useCallback(() => {
-    setIsResizing(false);
-  }, []);
-
-  React.useEffect(() => {
-    if (isResizing) {
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-      document.body.style.cursor = "ns-resize";
-      document.body.style.userSelect = "none";
-    } else {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-      document.body.style.cursor = "";
-      document.body.style.userSelect = "";
-    }
-
-    return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-      document.body.style.cursor = "";
-      document.body.style.userSelect = "";
-    };
-  }, [isResizing, handleMouseMove, handleMouseUp]);
-
   return (
     <div className="employee-page">
       <div className="">
@@ -258,15 +196,17 @@ const Employee: React.FC = () => {
       <div
         className={`employee-bottom-bar ${
           isBottomBarCollapsed ? "collapsed" : ""
-        } ${isResizing ? "resizing" : ""}`}
-        style={{
-          height: isBottomBarCollapsed ? "90px" : `${bottomBarHeight}px`,
-          transition: isResizing ? "none" : "height 0.3s ease",
-        }}
+        }`}
+        style={
+          {
+            // height: isBottomBarCollapsed ? "90px" : "350px",
+            // transition: "height 0.3s ease",
+          }
+        }
       >
         <button
           className="employee-toggle-btn"
-          onMouseDown={handleMouseDown}
+          onClick={toggleBottomBar}
           aria-label={
             isBottomBarCollapsed ? "Expand bottom bar" : "Collapse bottom bar"
           }
