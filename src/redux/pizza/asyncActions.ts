@@ -33,7 +33,7 @@ export const fetchMenuItemsFromAPI = createAsyncThunk<
       status: string;
       message: string;
       data: MenuItem[];
-    }>(`http://localhost:8080/api/v1/menu`);
+    }>(`http://localhost:7777/api/v1/menu`);
 
     let filteredData = [...data.data];
 
