@@ -13,3 +13,4 @@ export { default as ThemeToggle } from "./ThemeToggle";
 export { default as OrderHistory } from "./OrderHistory";
 export { default as CustomAlert } from "./CustomAlert";
 export { default as CustomConfirm } from "./CustomConfirm";
+export { default as LoginModal } from "./LoginModal";

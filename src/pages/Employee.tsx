@@ -1,36 +1,55 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { selectPizzaData } from "../redux/pizza/selectors";
 import { selectCart } from "../redux/cart/selectors";
 import { selectIsOrderHistoryOpen } from "../redux/orders/selectors";
+import { selectIsAuthenticated, selectUser } from "../redux/user/selectors";
+import { loadUserFromStorage, logoutUser } from "../redux/user/asyncActions";
 import {
   addItem,
   minusItem,
   removeItem,
   clearItems,
 } from "../redux/cart/slice";
-import { addOrder, toggleOrderHistory } from "../redux/orders/slice";
-import { fetchPizzasFromJSON } from "../redux/pizza/asyncActions";
+import { toggleOrderHistory } from "../redux/orders/slice";
+import { createOrder } from "../redux/orders/asyncActions";
+import { fetchPizzasFromAPI } from "../redux/pizza/asyncActions";
 import { useAppDispatch } from "../redux/store";
-import { OrderHistory, CustomAlert } from "../components";
-import { getNextOrderNumber } from "../utils/getOrdersFromLS";
+import { OrderHistory, CustomAlert, LoginModal } from "../components";
 
 const Employee: React.FC = () => {
   const dispatch = useDispatch();
   const appDispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { items, status } = useSelector(selectPizzaData);
   const { totalPrice, items: cartItems } = useSelector(selectCart);
   const isOrderHistoryOpen = useSelector(selectIsOrderHistoryOpen);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectUser);
 
   const [searchValue, setSearchValue] = React.useState("");
   const [isBottomBarCollapsed, setIsBottomBarCollapsed] = React.useState(true);
   const [alertMessage, setAlertMessage] = React.useState("");
   const [isAlertVisible, setIsAlertVisible] = React.useState(false);
+  const [hasTriedAuth, setHasTriedAuth] = React.useState(false);
+  const [orderNotes, setOrderNotes] = React.useState("");
 
   const totalCount = cartItems.reduce(
     (sum: number, item: any) => sum + item.count,
     0
   );
+
+  // Load user from localStorage on component mount
+  React.useEffect(() => {
+    const loadAuth = async () => {
+      await appDispatch(loadUserFromStorage());
+      setHasTriedAuth(true);
+    };
+    loadAuth();
+  }, [appDispatch]);
+
+  // No need for isLoginModalOpen state or handleLoginModalClose
 
   // Calculate 30% and 70% breakdown
   const thirtyPercent = Math.round(totalPrice * 0.3 * 100) / 100;
@@ -45,7 +64,7 @@ const Employee: React.FC = () => {
       const currentPage = "1";
 
       appDispatch(
-        fetchPizzasFromJSON({ sortBy, order, category, search, currentPage })
+        fetchPizzasFromAPI({ sortBy, order, category, search, currentPage })
       );
     };
 
@@ -53,7 +72,7 @@ const Employee: React.FC = () => {
   }, [appDispatch]);
 
   const filteredItems = items.filter((item) =>
-    item.name.toLowerCase().includes(searchValue.toLowerCase())
+    item.name && item.name.toLowerCase().includes(searchValue.toLowerCase())
   );
 
   // Group items by category while preserving original order
@@ -104,31 +123,35 @@ const Employee: React.FC = () => {
     return cartItem ? cartItem.count : 0;
   };
 
-  const onCompleteOrder = () => {
+  const onCompleteOrder = async () => {
     if (totalCount > 0) {
-      // Create order object with incremental ID
-      const orderNumber = getNextOrderNumber();
-      const order = {
-        id: orderNumber.toString(),
+      const orderData = {
         items: cartItems.filter((item) => item.count > 0),
         totalPrice,
         totalCount,
-        timestamp: new Date().toISOString(),
         thirtyPercent,
         seventyPercent,
+        userId: user?.id,
+        notes: orderNotes,
       };
-
-      // Add order to history
-      dispatch(addOrder(order));
-
-      // Show custom alert
-      setAlertMessage(
-        `Заказ #${orderNumber} на сумму ${totalPrice} $ (${totalCount} позиций) добавлен в систему!`
-      );
-      setIsAlertVisible(true);
-
-      // Clear the cart for the next order
-      dispatch(clearItems());
+      try {
+        const resultAction = await appDispatch(createOrder(orderData));
+        if (createOrder.fulfilled.match(resultAction)) {
+          const order = resultAction.payload;
+          setAlertMessage(
+            `Заказ #${order.id} на сумму ${order.totalPrice} $ (${order.totalCount} позиций) добавлен в систему!`
+          );
+          setIsAlertVisible(true);
+          dispatch(clearItems());
+          setOrderNotes("");
+        } else {
+          setAlertMessage("Ошибка при создании заказа. Попробуйте еще раз.");
+          setIsAlertVisible(true);
+        }
+      } catch (error) {
+        setAlertMessage("Ошибка при создании заказа. Попробуйте еще раз.");
+        setIsAlertVisible(true);
+      }
     }
   };
 
@@ -141,11 +164,57 @@ const Employee: React.FC = () => {
     setAlertMessage("");
   };
 
+  // Show loading or authentication prompt if not authenticated
+  if (hasTriedAuth && !isAuthenticated) {
+    return (
+      <div className="employee-page">
+        <div className="employee-auth-prompt">
+          <h2>Employee Access Required</h2>
+          <p>Please log in to access the employee panel.</p>
+          <LoginModal
+            isOpen={hasTriedAuth && !isAuthenticated}
+            onClose={() => {}}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading state while checking authentication
+  if (!hasTriedAuth) {
+    return (
+      <div className="employee-page employee-loading">
+        <div className="employee-auth-prompt">
+          <h2>Loading</h2>
+          <p>Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Authenticated user - show employee panel
   return (
     <div className="employee-page">
       <div className="">
         <div className="employee-header">
-          <h2 className="employee-title">Панель сотрудника</h2>
+          <div className="employee-header__top">
+            <h2 className="employee-title">Панель сотрудника</h2>
+            {user && (
+              <div className="employee-user-info">
+                <span className="employee-username">
+                  Добро пожаловать, {user.name} ({user.role})
+                </span>
+                <button
+                  className="employee-logout-btn"
+                  onClick={() => {
+                    appDispatch(logoutUser());
+                  }}
+                >
+                  Выйти
+                </button>
+              </div>
+            )}
+          </div>
           <div className="employee-header__controls">
             <div className="employee-search">
               <input
@@ -334,6 +403,15 @@ const Employee: React.FC = () => {
             </div>
           )}
 
+          <div className="employee-notes">
+            <input
+              type="text"
+              placeholder="Заметки к заказу..."
+              value={orderNotes}
+              onChange={(e) => setOrderNotes(e.target.value)}
+              className="employee-notes__input"
+            />
+          </div>
           <button
             className={`employee-complete-btn ${
               totalCount === 0 ? "disabled" : ""
@@ -355,6 +433,7 @@ const Employee: React.FC = () => {
         isVisible={isAlertVisible}
         onClose={closeAlert}
       />
+
     </div>
   );
 };

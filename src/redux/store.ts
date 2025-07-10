@@ -5,6 +5,7 @@ import pizza from "./pizza/slice";
 import theme from "./theme/slice";
 import orders from "./orders/slice";
 import menu from "./menu/slice";
+import user from "./user/slice";
 import { useDispatch } from "react-redux";
 
 export const store = configureStore({
@@ -15,6 +16,7 @@ export const store = configureStore({
     theme,
     orders,
     menu,
+    user,
   },
 });
 

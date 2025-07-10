@@ -2,34 +2,6 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Pizza, MenuItem, SearchPizzaParams } from "./types";
 import { pickBy, identity } from "lodash";
-import menuData from "../../data/menu.json";
-
-// Async action for fetching from API (keep for backward compatibility)
-export const fetchPizzas = createAsyncThunk<Pizza[], SearchPizzaParams>(
-  "pizza/fetchPizzasStatus",
-  async (params) => {
-    const { sortBy, order, category, search, currentPage } = params;
-    console.log(params, 4444);
-    const { data } = await axios.get<Pizza[]>(
-      `https://68659f9b89803950dbafe521.mockapi.io/api/v1/items`,
-      {
-        params: pickBy(
-          {
-            page: currentPage,
-            limit: 100,
-            category,
-            sortBy,
-            order,
-            search,
-          },
-          identity
-        ),
-      }
-    );
-
-    return data;
-  }
-);
 
 // Helper function to convert MenuItem to Pizza format for compatibility
 export const convertMenuItemToPizza = (menuItem: MenuItem): Pizza => ({
@@ -48,16 +20,22 @@ export const convertMenuItemToPizza = (menuItem: MenuItem): Pizza => ({
   components: menuItem.components, // Add the components property
 });
 
-// New async action for loading menu items from local JSON (returns MenuItem[])
-export const fetchMenuItems = createAsyncThunk<MenuItem[], SearchPizzaParams>(
-  "menu/fetchMenuItemsStatus",
-  async (params) => {
-    const { sortBy, order, category, search } = params;
+// New async action for loading menu items from backend API
+export const fetchMenuItemsFromAPI = createAsyncThunk<
+  MenuItem[],
+  SearchPizzaParams
+>("menu/fetchMenuItemsFromAPIStatus", async (params) => {
+  const { sortBy, order, category, search } = params;
 
-    // Simulate async behavior
-    await new Promise((resolve) => setTimeout(resolve, 100));
+  try {
+    // Fetch from backend API
+    const { data } = await axios.get<{
+      status: string;
+      message: string;
+      data: MenuItem[];
+    }>(`http://localhost:8080/api/v1/menu`);
 
-    let filteredData = [...menuData] as MenuItem[];
+    let filteredData = [...data.data];
 
     // Apply category filter
     if (category) {
@@ -96,20 +74,23 @@ export const fetchMenuItems = createAsyncThunk<MenuItem[], SearchPizzaParams>(
     });
 
     return filteredData;
+  } catch (error) {
+    console.error("Error fetching menu from API:", error);
+    throw error;
   }
-);
+});
 
-// New async action for loading from local JSON (returns Pizza[] for compatibility)
-export const fetchPizzasFromJSON = createAsyncThunk<Pizza[], SearchPizzaParams>(
-  "pizza/fetchPizzasFromJSONStatus",
+// New async action for loading from backend API (returns Pizza[] for compatibility)
+export const fetchPizzasFromAPI = createAsyncThunk<Pizza[], SearchPizzaParams>(
+  "pizza/fetchPizzasFromAPIStatus",
   async (params, { dispatch }) => {
-    // Use the fetchMenuItems thunk and convert the result
-    const menuItemsResult = await dispatch(fetchMenuItems(params));
+    // Use the fetchMenuItemsFromAPI thunk and convert the result
+    const menuItemsResult = await dispatch(fetchMenuItemsFromAPI(params));
 
-    if (fetchMenuItems.fulfilled.match(menuItemsResult)) {
+    if (fetchMenuItemsFromAPI.fulfilled.match(menuItemsResult)) {
       return menuItemsResult.payload.map(convertMenuItemToPizza);
     }
 
-    throw new Error("Failed to fetch menu items");
+    throw new Error("Failed to fetch menu items from API");
   }
 );

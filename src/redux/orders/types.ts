@@ -14,9 +14,15 @@ export interface Order {
   timestamp: string;
   thirtyPercent: number;
   seventyPercent: number;
+  userId?: number;
+  usedIngredients?: Array<{ name: string; amount: number }>;
+  notes?: string;
+  paid: boolean;
 }
 
 export interface OrdersSliceState {
   orders: Order[];
   isOrderHistoryOpen: boolean;
+  loading?: boolean;
+  error?: string | null;
 }

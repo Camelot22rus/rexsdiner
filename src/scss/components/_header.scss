@@ -73,6 +73,10 @@
   }
 
   &__cart {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
     .button {
       font-size: 14px;
       padding: 8px 16px;

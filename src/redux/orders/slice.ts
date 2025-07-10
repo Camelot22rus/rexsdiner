@@ -1,27 +1,20 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Order, OrdersSliceState } from "./types";
-import {
-  getOrdersFromLS,
-  saveOrdersToLS,
-  clearOrdersFromLS,
-} from "../../utils/getOrdersFromLS";
+import { createOrder, fetchOrders } from "./asyncActions";
 
 const initialState: OrdersSliceState = {
-  orders: getOrdersFromLS(),
+  orders: [],
   isOrderHistoryOpen: false,
+  loading: false,
+  error: null,
 };
 
 const ordersSlice = createSlice({
   name: "orders",
   initialState,
   reducers: {
-    addOrder: (state, action: PayloadAction<Order>) => {
-      state.orders.unshift(action.payload); // Add new order at the beginning
-      saveOrdersToLS(state.orders);
-    },
     clearOrders: (state) => {
       state.orders = [];
-      clearOrdersFromLS();
     },
     toggleOrderHistory: (state) => {
       state.isOrderHistoryOpen = !state.isOrderHistoryOpen;
@@ -30,10 +23,29 @@ const ordersSlice = createSlice({
       state.isOrderHistoryOpen = action.payload;
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(createOrder.fulfilled, (state, action) => {
+      if (action.payload) {
+        state.orders.unshift(action.payload);
+      }
+    });
+    builder.addCase(fetchOrders.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(fetchOrders.fulfilled, (state, action) => {
+      state.orders = action.payload || [];
+      state.loading = false;
+      state.error = null;
+    });
+    builder.addCase(fetchOrders.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error?.message || 'Failed to fetch orders';
+    });
+  },
 });
 
 export const {
-  addOrder,
   clearOrders,
   toggleOrderHistory,
   setOrderHistoryOpen,

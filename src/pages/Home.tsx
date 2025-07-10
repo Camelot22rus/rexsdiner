@@ -11,7 +11,7 @@ import { useAppDispatch } from '../redux/store';
 import { selectFilter } from '../redux/filter/selectors';
 import { selectPizzaData } from '../redux/pizza/selectors';
 import { setCategoryId, setCurrentPage, setFilters } from '../redux/filter/slice';
-import { fetchPizzas } from '../redux/pizza/asyncActions';
+import { fetchPizzasFromAPI } from '../redux/pizza/asyncActions';
 import { SearchPizzaParams } from '../redux/pizza/types';
 
 const Home: React.FC = () => {
@@ -37,13 +37,13 @@ const Home: React.FC = () => {
     const search = searchValue;
 
     dispatch(
-      fetchPizzas({
+      fetchPizzasFromAPI({
         sortBy,
         order,
         category,
         search,
         currentPage: String(currentPage),
-      }),
+      })
     );
 
     window.scrollTo(0, 0);

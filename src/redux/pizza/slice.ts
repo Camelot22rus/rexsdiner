@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { fetchPizzas, fetchPizzasFromJSON } from "./asyncActions";
+import {
+  fetchPizzasFromAPI,
+} from "./asyncActions";
 import { Pizza, PizzaSliceState, Status } from "./types";
 
 const initialState: PizzaSliceState = {
@@ -17,33 +19,17 @@ const pizzaSlice = createSlice({
   },
   extraReducers: (builder) => {
     // Handle API fetch
-    builder.addCase(fetchPizzas.pending, (state, action) => {
+    builder.addCase(fetchPizzasFromAPI.pending, (state, action) => {
       state.status = Status.LOADING;
       state.items = [];
     });
 
-    builder.addCase(fetchPizzas.fulfilled, (state, action) => {
+    builder.addCase(fetchPizzasFromAPI.fulfilled, (state, action) => {
       state.items = action.payload;
       state.status = Status.SUCCESS;
     });
 
-    builder.addCase(fetchPizzas.rejected, (state, action) => {
-      state.status = Status.ERROR;
-      state.items = [];
-    });
-
-    // Handle JSON fetch
-    builder.addCase(fetchPizzasFromJSON.pending, (state, action) => {
-      state.status = Status.LOADING;
-      state.items = [];
-    });
-
-    builder.addCase(fetchPizzasFromJSON.fulfilled, (state, action) => {
-      state.items = action.payload;
-      state.status = Status.SUCCESS;
-    });
-
-    builder.addCase(fetchPizzasFromJSON.rejected, (state, action) => {
+    builder.addCase(fetchPizzasFromAPI.rejected, (state, action) => {
       state.status = Status.ERROR;
       state.items = [];
     });

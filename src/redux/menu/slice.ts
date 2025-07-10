@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { fetchMenuItems } from "../pizza/asyncActions";
+import { fetchMenuItemsFromAPI } from "../pizza/asyncActions";
 import { MenuItem, MenuSliceState, Status } from "../pizza/types";
 
 const initialState: MenuSliceState = {
@@ -16,17 +16,17 @@ const menuSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchMenuItems.pending, (state, action) => {
+    builder.addCase(fetchMenuItemsFromAPI.pending, (state, action) => {
       state.status = Status.LOADING;
       state.items = [];
     });
 
-    builder.addCase(fetchMenuItems.fulfilled, (state, action) => {
+    builder.addCase(fetchMenuItemsFromAPI.fulfilled, (state, action) => {
       state.items = action.payload;
       state.status = Status.SUCCESS;
     });
 
-    builder.addCase(fetchMenuItems.rejected, (state, action) => {
+    builder.addCase(fetchMenuItemsFromAPI.rejected, (state, action) => {
       state.status = Status.ERROR;
       state.items = [];
     });
