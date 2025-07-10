@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Pizza, MenuItem, SearchPizzaParams } from "./types";
 import { pickBy, identity } from "lodash";
+import { API_BASE_URL } from "../../config";
 
 // Helper function to convert MenuItem to Pizza format for compatibility
 export const convertMenuItemToPizza = (menuItem: MenuItem): Pizza => ({
@@ -33,7 +34,7 @@ export const fetchMenuItemsFromAPI = createAsyncThunk<
       status: string;
       message: string;
       data: MenuItem[];
-    }>(`http://localhost:7777/api/v1/menu`);
+    }>(`${API_BASE_URL}/menu`);
 
     let filteredData = [...data.data];
 

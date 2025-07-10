@@ -1,8 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { User, UserLoginRequest, UserLoginResponse } from "./types";
-
-const API_BASE_URL = "http://localhost:7777/api/v1";
+import { API_BASE_URL } from "../../config";
 
 // Async action for user login
 export const loginUser = createAsyncThunk<User, UserLoginRequest>(

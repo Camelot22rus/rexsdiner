@@ -1,8 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Order, OrderItem } from "./types";
-
-const API_BASE_URL = "http://localhost:7777/api/v1";
+import { API_BASE_URL } from "../../config";
 
 export interface CreateOrderRequest {
   items: OrderItem[];
