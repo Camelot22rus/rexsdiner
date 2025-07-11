@@ -1,23 +1,23 @@
 {
   "files": {
-    "main.css": "/rexsdiner/static/css/main.6e083a05.css",
-    "main.js": "/rexsdiner/static/js/main.14724e0e.js",
+    "main.css": "/rexsdiner/static/css/main.b5487512.css",
+    "main.js": "/rexsdiner/static/js/main.a30461fa.js",
     "Cart.js": "/rexsdiner/static/js/Cart.3ecf127b.chunk.js",
     "FullPizza.js": "/rexsdiner/static/js/FullPizza.a32e73ec.chunk.js",
-    "Employee.js": "/rexsdiner/static/js/Employee.383de49b.chunk.js",
+    "Employee.js": "/rexsdiner/static/js/Employee.a7e0cf9f.chunk.js",
     "NotFound.js": "/rexsdiner/static/js/NotFound.677b9ed8.chunk.js",
     "static/media/rex-logo.png": "/rexsdiner/static/media/rex-logo.1123837a41fcfaa4c9b0.png",
     "static/media/empty-cart.png": "/rexsdiner/static/media/empty-cart.db905d1f4b063162f25b.png",
     "index.html": "/rexsdiner/index.html",
-    "main.6e083a05.css.map": "/rexsdiner/static/css/main.6e083a05.css.map",
-    "main.14724e0e.js.map": "/rexsdiner/static/js/main.14724e0e.js.map",
+    "main.b5487512.css.map": "/rexsdiner/static/css/main.b5487512.css.map",
+    "main.a30461fa.js.map": "/rexsdiner/static/js/main.a30461fa.js.map",
     "Cart.3ecf127b.chunk.js.map": "/rexsdiner/static/js/Cart.3ecf127b.chunk.js.map",
     "FullPizza.a32e73ec.chunk.js.map": "/rexsdiner/static/js/FullPizza.a32e73ec.chunk.js.map",
-    "Employee.383de49b.chunk.js.map": "/rexsdiner/static/js/Employee.383de49b.chunk.js.map",
+    "Employee.a7e0cf9f.chunk.js.map": "/rexsdiner/static/js/Employee.a7e0cf9f.chunk.js.map",
     "NotFound.677b9ed8.chunk.js.map": "/rexsdiner/static/js/NotFound.677b9ed8.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.6e083a05.css",
-    "static/js/main.14724e0e.js"
+    "static/css/main.b5487512.css",
+    "static/js/main.a30461fa.js"
   ]
 }
