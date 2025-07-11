@@ -1,30 +1,37 @@
 import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { selectOrders, selectOrdersLoading } from "../redux/orders/selectors";
 import { selectPizzaData } from "../redux/pizza/selectors";
 import { setOrderHistoryOpen, clearOrders } from "../redux/orders/slice";
 import { fetchOrders, markOrdersPaid } from "../redux/orders/asyncActions";
+import { useAppDispatch } from "../redux/store";
 import CustomConfirm from "./CustomConfirm";
 import { selectUser } from "../redux/user/selectors";
 
 const OrderHistory: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const orders = useSelector(selectOrders);
   const loading = useSelector(selectOrdersLoading);
   const { items: menuItems } = useSelector(selectPizzaData);
   const user = useSelector(selectUser);
 
-  // Fetch orders for the current user when component mounts or user changes
+  // Fetch orders when modal opens (component mounts)
   React.useEffect(() => {
-    if (user && user.id) {
-      dispatch(fetchOrders({ userId: user.id }) as any);
+    if (user) {
+      dispatch(fetchOrders({ userId: user.id }));
     }
   }, [dispatch, user]);
+
+  const [hidePaid, setHidePaid] = React.useState(true);
   // Filter orders to only those belonging to the current user/employee
   const filteredOrders = React.useMemo(() => {
     if (!user) return [];
-    return orders.filter(order => order.userId === user.id);
-  }, [orders, user]);
+    let result = orders.filter(order => order.userId === user.id);
+    if (hidePaid) {
+      result = result.filter(order => !order.paid);
+    }
+    return result;
+  }, [orders, user, hidePaid]);
   const [expandedComponents, setExpandedComponents] = React.useState<
     string | null
   >(null);
@@ -163,6 +170,25 @@ const OrderHistory: React.FC = () => {
         <div className="order-history-header">
           <h2 className="order-history-title">История заказов</h2>
           <div className="order-history-header-actions">
+            <button
+              className={`order-history-hide-paid order-history-select-mode${hidePaid ? ' active' : ''}`}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 8 }}
+              onClick={() => setHidePaid((prev) => !prev)}
+              title={hidePaid ? 'Показать все заказы' : 'Скрыть \"в кассе\"'}
+            >
+              {hidePaid ? (
+                // Eye closed SVG
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M17.94 17.94C16.13 19.25 14.13 20 12 20C7 20 2.73 16.11 1 12C1.73 10.19 2.91 8.6 4.44 7.35M9.53 9.53C10.07 9.19 10.78 9 12 9C14.21 9 16 10.79 16 13C16 14.22 15.81 14.93 15.47 15.47M9.53 9.53L15.47 15.47M9.53 9.53L8.47 8.47M15.47 15.47L16.53 16.53M2 2L22 22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              ) : (
+                // Eye open SVG
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 12C2.73 16.11 7 20 12 20C17 20 21.27 16.11 23 12C21.27 7.89 17 4 12 4C7 4 2.73 7.89 1 12Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+            </button>
             {filteredOrders.length > 0 && (
               <button
                 className={`order-history-select-mode${selectMode ? ' active' : ''}`}
@@ -205,7 +231,7 @@ const OrderHistory: React.FC = () => {
         <div className="order-history-content">
           {filteredOrders.length === 0 ? (
             <div className="order-history-empty">
-              <p>Заказы еще не были добавлены</p>
+              <p>Заказы еще не были добавлены или были скрыты</p>
             </div>
           ) : (
             <div className={`order-history-list${selectMode ? ' select-mode' : ''}`}>
@@ -293,6 +319,11 @@ const OrderHistory: React.FC = () => {
                             </div>
                           ))}
                         </div>
+                        {order.notes && order.notes.trim() && (
+                          <div className="order-notes-footer">
+                            <span className="order-notes-label">Заметка:</span> {order.notes}
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>

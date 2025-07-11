@@ -17,6 +17,7 @@ import { createOrder } from "../redux/orders/asyncActions";
 import { fetchPizzasFromAPI } from "../redux/pizza/asyncActions";
 import { useAppDispatch } from "../redux/store";
 import { OrderHistory, CustomAlert, LoginModal } from "../components";
+import FridgeModal from '../components/FridgeModal';
 
 const Employee: React.FC = () => {
   const dispatch = useDispatch();
@@ -34,6 +35,7 @@ const Employee: React.FC = () => {
   const [isAlertVisible, setIsAlertVisible] = React.useState(false);
   const [hasTriedAuth, setHasTriedAuth] = React.useState(false);
   const [orderNotes, setOrderNotes] = React.useState("");
+  const [isFridgeOpen, setIsFridgeOpen] = React.useState(false);
 
   const totalCount = cartItems.reduce(
     (sum: number, item: any) => sum + item.count,
@@ -225,6 +227,22 @@ const Employee: React.FC = () => {
                 className="employee-search__input"
               />
             </div>
+            {user?.role === "Admin" && (
+              <button
+                className="employee-fridge-btn"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                title="Fridge (Admin only)"
+                onClick={() => setIsFridgeOpen(true)}
+              >
+                {/* Simple fridge SVG icon */}
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="6" y="3" width="12" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                  <line x1="6" y1="10" x2="18" y2="10" stroke="currentColor" strokeWidth="2"/>
+                  <circle cx="8.5" cy="7" r="1" fill="currentColor"/>
+                  <circle cx="8.5" cy="14" r="1" fill="currentColor"/>
+                </svg>
+              </button>
+            )}
             <button
               className="employee-orders-btn"
               onClick={() => dispatch(toggleOrderHistory())}
@@ -433,6 +451,11 @@ const Employee: React.FC = () => {
         isVisible={isAlertVisible}
         onClose={closeAlert}
       />
+
+      {/* Render FridgeModal for admin */}
+      {user?.role === "Admin" && (
+        <FridgeModal isOpen={isFridgeOpen} onClose={() => setIsFridgeOpen(false)} />
+      )}
 
     </div>
   );

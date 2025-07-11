@@ -233,6 +233,10 @@
   }
 }
 
+.employee-fridge-btn {
+  @extend .employee-orders-btn;
+}
+
 .employee-content {
   padding: 0 0 20px 0;
 }
@@ -1260,6 +1264,22 @@
   }
 }
 
+.order-notes-footer {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: var(--surface-color);
+  border-left: 3px solid var(--accent-color);
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--text-color);
+  word-break: break-word;
+  .order-notes-label {
+    font-weight: 600;
+    color: var(--accent-color);
+    margin-right: 6px;
+  }
+}
+
 // Responsive styles for order history
 @media (max-width: 767px) {
   .order-history-overlay {
@@ -1267,7 +1287,7 @@
   }
 
   .order-history-modal {
-    max-height: 95vh;
+    max-height: 90svh;
   }
 
   .order-history-header {
