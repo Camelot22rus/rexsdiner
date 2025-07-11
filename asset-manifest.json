@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/rexsdiner/static/css/main.cbdb8383.css",
-    "main.js": "/rexsdiner/static/js/main.3d6c3d40.js",
+    "main.css": "/rexsdiner/static/css/main.6e083a05.css",
+    "main.js": "/rexsdiner/static/js/main.051d64ea.js",
     "Cart.js": "/rexsdiner/static/js/Cart.3ecf127b.chunk.js",
     "FullPizza.js": "/rexsdiner/static/js/FullPizza.a32e73ec.chunk.js",
     "Employee.js": "/rexsdiner/static/js/Employee.383de49b.chunk.js",
@@ -9,15 +9,15 @@
     "static/media/rex-logo.png": "/rexsdiner/static/media/rex-logo.1123837a41fcfaa4c9b0.png",
     "static/media/empty-cart.png": "/rexsdiner/static/media/empty-cart.db905d1f4b063162f25b.png",
     "index.html": "/rexsdiner/index.html",
-    "main.cbdb8383.css.map": "/rexsdiner/static/css/main.cbdb8383.css.map",
-    "main.3d6c3d40.js.map": "/rexsdiner/static/js/main.3d6c3d40.js.map",
+    "main.6e083a05.css.map": "/rexsdiner/static/css/main.6e083a05.css.map",
+    "main.051d64ea.js.map": "/rexsdiner/static/js/main.051d64ea.js.map",
     "Cart.3ecf127b.chunk.js.map": "/rexsdiner/static/js/Cart.3ecf127b.chunk.js.map",
     "FullPizza.a32e73ec.chunk.js.map": "/rexsdiner/static/js/FullPizza.a32e73ec.chunk.js.map",
     "Employee.383de49b.chunk.js.map": "/rexsdiner/static/js/Employee.383de49b.chunk.js.map",
     "NotFound.677b9ed8.chunk.js.map": "/rexsdiner/static/js/NotFound.677b9ed8.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.cbdb8383.css",
-    "static/js/main.3d6c3d40.js"
+    "static/css/main.6e083a05.css",
+    "static/js/main.051d64ea.js"
   ]
 }
