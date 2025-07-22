@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { API_BASE_URL } from '../config';
+import { useSelector } from "react-redux";
+import { selectUser } from "../redux/user/selectors";
 
 interface InventoryItem {
   name: string;
@@ -15,9 +17,12 @@ interface FridgeModalProps {
 
 const FridgeModal: React.FC<FridgeModalProps> = ({ isOpen, onClose }) => {
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
-  const [edited, setEdited] = useState<Record<string, number>>({});
+  const [edited, setEdited] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const user = useSelector(selectUser);
+  const [clearedInputs, setClearedInputs] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!isOpen) return;
@@ -37,29 +42,108 @@ const FridgeModal: React.FC<FridgeModalProps> = ({ isOpen, onClose }) => {
       .finally(() => setLoading(false));
   }, [isOpen]);
 
-  const handleChange = (name: string, value: string | number) => {
-    setEdited((prev) => ({ ...prev, [name]: Number(value) }));
+  const handleChange = (name: string, value: string) => {
+    setEdited((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleInputFocus = (name: string) => {
+    setClearedInputs(prev => {
+      if (!prev.has(name)) {
+        setEdited(e => ({ ...e, [name]: "" }));
+        return new Set(prev).add(name);
+      }
+      return prev;
+    });
   };
 
   const handlePlus = (name: string) => {
-    const current = edited[name] !== undefined ? edited[name] : inventory.find(i => i.name === name)?.quantity || 0;
-    setEdited((prev) => ({ ...prev, [name]: current + 1 }));
+    const currentStr = edited[name] !== undefined ? edited[name] : String(inventory.find(i => i.name === name)?.quantity || 0);
+    const current = currentStr === "" ? 0 : parseInt(currentStr, 10);
+    setEdited((prev) => ({ ...prev, [name]: String(current + 1) }));
   };
 
   const handleMinus = (name: string) => {
-    const current = edited[name] !== undefined ? edited[name] : inventory.find(i => i.name === name)?.quantity || 0;
-    setEdited((prev) => ({ ...prev, [name]: Math.max(0, current - 1) }));
+    const currentStr = edited[name] !== undefined ? edited[name] : String(inventory.find(i => i.name === name)?.quantity || 0);
+    const current = currentStr === "" ? 0 : parseInt(currentStr, 10);
+    setEdited((prev) => ({ ...prev, [name]: String(Math.max(0, current - 1)) }));
+  };
+
+  const handleInputBlur = (name: string) => {
+    if (edited[name] === "") {
+      const orig = inventory.find(i => i.name === name)?.quantity;
+      setEdited(prev => ({ ...prev, [name]: orig !== undefined ? String(orig) : "0" }));
+    }
   };
 
   // Check if any value in edited differs from inventory
   const hasChanges = Object.keys(edited).some(name => {
     const orig = inventory.find(i => i.name === name)?.quantity;
-    return orig !== undefined && edited[name] !== orig;
+    // Compare as string for leading zeros, but treat empty as 0
+    return orig !== undefined && (edited[name] === "" ? 0 : Number(edited[name])) !== orig;
   });
 
-  const handleSave = () => {
-    // TODO: Implement save logic (API call)
-    onClose();
+  const handleSave = async () => {
+    if (!user || !hasChanges) return;
+
+    setSaving(true);
+    setError(null);
+
+    try {
+      // Prepare the list of changed items
+      const items = Object.keys(edited)
+        .filter(name => {
+          const orig = inventory.find(i => i.name === name)?.quantity;
+          return orig !== undefined && (edited[name] === "" ? 0 : Number(edited[name])) !== orig;
+        })
+        .map(name => ({
+          name,
+          quantity: edited[name] === "" ? 0 : Number(edited[name])
+        }));
+
+      if (items.length === 0) {
+        setSaving(false);
+        return;
+      }
+
+      const response = await fetch(`${API_BASE_URL}/inventory/bulk-update`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          items,
+          userId: user.id
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.status === "success") {
+        // Update local inventory with saved values
+        setInventory(prevInventory => 
+          prevInventory.map(item => {
+            if (edited[item.name] !== undefined) {
+              return { ...item, quantity: edited[item.name] === "" ? 0 : Number(edited[item.name]) };
+            }
+            return item;
+          })
+        );
+        
+        // Clear edited state
+        setEdited({});
+        
+        // Show success message briefly
+        setTimeout(() => {
+          onClose();
+        }, 500);
+      } else {
+        setError(data.message || "Ошибка сохранения инвентаря");
+      }
+    } catch (err) {
+      setError("Ошибка сохранения инвентаря");
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -79,8 +163,8 @@ const FridgeModal: React.FC<FridgeModalProps> = ({ isOpen, onClose }) => {
           <form onSubmit={e => { e.preventDefault(); handleSave(); }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {inventory.map((item) => {
-                const value = edited[item.name] !== undefined ? edited[item.name] : item.quantity;
-                const changed = value !== item.quantity;
+                const value = edited[item.name] !== undefined ? edited[item.name] : String(item.quantity);
+                const changed = (value === "" ? 0 : Number(value)) !== item.quantity;
                 return (
                   <div key={item.name} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{ flex: 1 }}>{item.name}</span>
@@ -89,6 +173,8 @@ const FridgeModal: React.FC<FridgeModalProps> = ({ isOpen, onClose }) => {
                       type="number"
                       value={value}
                       onChange={e => handleChange(item.name, e.target.value)}
+                      onFocus={() => handleInputFocus(item.name)}
+                      onBlur={() => handleInputBlur(item.name)}
                       style={{
                         width: 60,
                         padding: 6,
@@ -105,8 +191,24 @@ const FridgeModal: React.FC<FridgeModalProps> = ({ isOpen, onClose }) => {
                 );
               })}
             </div>
-            <button type="submit" disabled={!hasChanges} style={{ marginTop: 24, width: '100%', background: hasChanges ? 'var(--accent-color, #fe5f1e)' : '#ccc', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 0', fontSize: 16, fontWeight: 600, cursor: hasChanges ? 'pointer' : 'not-allowed', opacity: hasChanges ? 1 : 0.7 }}>
-              Сохранить
+            <button 
+              type="submit" 
+              disabled={!hasChanges || saving} 
+              style={{ 
+                marginTop: 24, 
+                width: '100%', 
+                background: hasChanges && !saving ? 'var(--accent-color, #fe5f1e)' : '#ccc', 
+                color: '#fff', 
+                border: 'none', 
+                borderRadius: 8, 
+                padding: '12px 0', 
+                fontSize: 16, 
+                fontWeight: 600, 
+                cursor: hasChanges && !saving ? 'pointer' : 'not-allowed', 
+                opacity: hasChanges && !saving ? 1 : 0.7 
+              }}
+            >
+              {saving ? 'Сохранение...' : 'Сохранить'}
             </button>
           </form>
         )}
