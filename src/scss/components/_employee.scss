@@ -404,6 +404,13 @@
   }
 }
 
+.product-item__info-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-between;
+}
+
 .loading {
   text-align: center;
   padding: 40px;

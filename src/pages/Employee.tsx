@@ -18,6 +18,9 @@ import { fetchPizzasFromAPI } from "../redux/pizza/asyncActions";
 import { useAppDispatch } from "../redux/store";
 import { OrderHistory, CustomAlert, LoginModal } from "../components";
 import FridgeModal from '../components/FridgeModal';
+import AvailabilityDot from '../components/AvailabilityDot';
+import Notification from '../components/Notification';
+import { API_BASE_URL } from '../config';
 
 const Employee: React.FC = () => {
   const dispatch = useDispatch();
@@ -36,6 +39,26 @@ const Employee: React.FC = () => {
   const [hasTriedAuth, setHasTriedAuth] = React.useState(false);
   const [orderNotes, setOrderNotes] = React.useState("");
   const [isFridgeOpen, setIsFridgeOpen] = React.useState(false);
+  const [inventory, setInventory] = React.useState<{ name: string; quantity: number }[]>([]);
+  const [inventoryLoading, setInventoryLoading] = React.useState(false);
+  const [inventoryError, setInventoryError] = React.useState<string | null>(null);
+  const [notification, setNotification] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    setInventoryLoading(true);
+    setInventoryError(null);
+    fetch(`${API_BASE_URL}/inventory`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === 'success') {
+          setInventory(data.data);
+        } else {
+          setInventoryError(data.message || 'Ошибка загрузки инвентаря');
+        }
+      })
+      .catch(() => setInventoryError('Ошибка загрузки инвентаря'))
+      .finally(() => setInventoryLoading(false));
+  }, []);
 
   const totalCount = cartItems.reduce(
     (sum: number, item: any) => sum + item.count,
@@ -197,6 +220,9 @@ const Employee: React.FC = () => {
   // Authenticated user - show employee panel
   return (
     <div className="employee-page">
+      {notification && (
+        <Notification message={notification} onClose={() => setNotification(null)} />
+      )}
       <div className="">
         <div className="employee-header">
           <div className="employee-header__top">
@@ -269,8 +295,10 @@ const Employee: React.FC = () => {
 
         <div className="employee-content">
           <div className="product-list">
-            {status === "loading" ? (
+            {status === "loading" || inventoryLoading ? (
               <div className="loading">Загружаем продукты...</div>
+            ) : inventoryError ? (
+              <div className="loading" style={{ color: 'red' }}>{inventoryError}</div>
             ) : (
               categoryNames.map((categoryName) => (
                 <div key={categoryName} className="category-section">
@@ -278,13 +306,59 @@ const Employee: React.FC = () => {
                   <div className="category-items">
                     {groupedItems[categoryName].map((item) => {
                       const itemCount = getItemCount(item.id);
+                      // Determine if this is a drink
+                      const isDrink = (item.categorie || '').toLowerCase().includes('drink') || (item.categorie || '').toLowerCase().includes('напит');
+                      // Find the minimum number of products that can be made from all ingredients
+                      let level: number | null = null;
+                      let missingIngredients: string[] = [];
+                      // Helper to gather required ingredients for combos
+                      function getComboIngredients(comboComponents: string[], allMenuItems: any[]): Record<string, number> {
+                        const ingredientMap: Record<string, number> = {};
+                        for (const compName of comboComponents) {
+                          const menuItem = allMenuItems.find(item => item.name === compName);
+                          // Skip drinks in combos
+                          const isDrink = menuItem && ((menuItem.categorie || '').toLowerCase().includes('drink') || (menuItem.categorie || '').toLowerCase().includes('напит'));
+                          if (menuItem && menuItem.components && !isDrink) {
+                            for (const comp of menuItem.components) {
+                              ingredientMap[comp.name] = (ingredientMap[comp.name] || 0) + (comp.amount || 1);
+                            }
+                          }
+                        }
+                        return ingredientMap;
+                      }
+                      if (!isDrink) {
+                        let requiredIngredients: Record<string, number> = {};
+                        if (item.comboComponents && item.comboComponents.length > 0) {
+                          requiredIngredients = getComboIngredients(item.comboComponents, items);
+                        } else if (item.components && item.components.length > 0) {
+                          for (const comp of item.components) {
+                            requiredIngredients[comp.name] = (requiredIngredients[comp.name] || 0) + (comp.amount || 1);
+                          }
+                        }
+                        let minAvailable = Infinity;
+                        for (const [name, amountNeeded] of Object.entries(requiredIngredients)) {
+                          const inv = inventory.find(i => i.name === name);
+                          if (!inv || inv.quantity < amountNeeded) {
+                            missingIngredients.push(name);
+                            minAvailable = 0;
+                            continue;
+                          }
+                          const possible = Math.max(0, Math.floor(inv.quantity / amountNeeded));
+                          if (possible < minAvailable) minAvailable = possible;
+                        }
+                        level = isFinite(minAvailable) ? minAvailable : null;
+                      }
                       return (
                         <div key={item.id} className="product-item">
                           <div className="product-item__info">
-                            <h4 className="product-item__title">{item.name}</h4>
+                            {/* Availability dot for non-drinks */}
+                            <h4 className="product-item__title" style={{ display: 'inline-block', margin: 0 }}>{item.name}</h4>
+                            <div className="product-item__info-right">
                             <span className="product-item__price">
                               {item.price} $
                             </span>
+                            {!isDrink && <AvailabilityDot level={level} missingIngredients={level === 0 ? missingIngredients : undefined} onNotify={setNotification} />}
+                            </div>
                           </div>
                           <div className="product-item__controls">
                             {itemCount > 0 && (
