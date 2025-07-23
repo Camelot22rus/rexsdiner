@@ -6,7 +6,7 @@ interface NotificationProps {
   duration?: number;
 }
 
-const Notification: React.FC<NotificationProps> = ({ message, onClose, duration = 100000 }) => {
+const Notification: React.FC<NotificationProps> = ({ message, onClose, duration = 5000 }) => {
   useEffect(() => {
     const timer = setTimeout(onClose, duration);
     return () => clearTimeout(timer);
