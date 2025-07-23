@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { API_BASE_URL } from '../config';
 import { useSelector } from "react-redux";
 import { selectUser } from "../redux/user/selectors";
+import styles from './FridgeModal.module.scss';
 
 interface InventoryItem {
   name: string;
@@ -150,7 +151,7 @@ const FridgeModal: React.FC<FridgeModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <div className="modal-overlay" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div className="modal" style={{ background: 'var(--surface-color, #fff)', borderRadius: 16, maxWidth: 400, width: '90%', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', border: '1px solid var(--border-color, #eee)', padding: 24, position: 'relative' }}>
+      <div className={styles.fridgeModal}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600 }}>Инвентарь</h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: 24, cursor: 'pointer', color: 'var(--text-secondary, #888)' }}>×</button>
@@ -161,12 +162,12 @@ const FridgeModal: React.FC<FridgeModalProps> = ({ isOpen, onClose }) => {
           <div style={{ color: 'red', marginBottom: 16 }}>{error}</div>
         ) : (
           <form onSubmit={e => { e.preventDefault(); handleSave(); }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className={styles.fridgeInventoryList}>
               {inventory.map((item) => {
                 const value = edited[item.name] !== undefined ? edited[item.name] : String(item.quantity);
                 const changed = (value === "" ? 0 : Number(value)) !== item.quantity;
                 return (
-                  <div key={item.name} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div key={item.name} className={styles.fridgeInventoryItem} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{ flex: 1 }}>{item.name}</span>
                     <button type="button" onClick={() => handleMinus(item.name)} style={{ padding: '4px 10px', borderRadius: 6, border: '1px solid var(--border-color, #eee)', background: '#f5f5f5', cursor: 'pointer', fontSize: 18, fontWeight: 700 }}>-</button>
                     <input
