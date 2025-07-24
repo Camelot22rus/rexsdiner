@@ -21,6 +21,9 @@ const Employee = React.lazy(
 const NotFound = React.lazy(
   () => import(/* webpackChunkName: "NotFound" */ "./pages/NotFound")
 );
+const EmployeeProfile = React.lazy(
+  () => import(/* webpackChunkName: "EmployeeProfile" */ "./pages/EmployeeProfile")
+);
 
 function App() {
   return (
@@ -48,6 +51,14 @@ function App() {
           element={
             <Suspense fallback={<div>Идёт загрузка...</div>}>
               <Employee />
+            </Suspense>
+          }
+        />
+        <Route
+          path="employee/profile"
+          element={
+            <Suspense fallback={<div>Идёт загрузка...</div>}>
+              <EmployeeProfile />
             </Suspense>
           }
         />

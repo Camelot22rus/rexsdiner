@@ -233,6 +233,14 @@ const Employee: React.FC = () => {
                   Добро пожаловать, {user.name} ({user.role})
                 </span>
                 <button
+                  className="employee-profile-btn"
+                  onClick={() => {
+                    navigate("/employee/profile");
+                  }}
+                >
+                  Профиль
+                </button>
+                <button
                   className="employee-logout-btn"
                   onClick={() => {
                     appDispatch(logoutUser());
