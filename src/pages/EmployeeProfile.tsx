@@ -203,7 +203,7 @@ const EmployeeProfile: React.FC = () => {
   const recentOrders = myOrders.slice(-5).reverse();
 
   // Low inventory (quantity <= 3)
-  const lowInventory = inventory.filter((item: any) => item.quantity <= 3);
+  const lowInventory = inventory.filter((item: any) => item.quantity <= 15);
 
   // Generate chart data
   const last7Days = Array.from({length: 7}, (_, i) => {
