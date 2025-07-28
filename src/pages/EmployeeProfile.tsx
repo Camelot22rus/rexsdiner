@@ -202,8 +202,25 @@ const EmployeeProfile: React.FC = () => {
   // Recent orders (last 5)
   const recentOrders = myOrders.slice(-5).reverse();
 
-  // Low inventory (quantity <= 3)
-  const lowInventory = inventory.filter((item: any) => item.quantity <= 15);
+  // Low inventory: 50 for specific items, 15 for others
+  const specialLowStockItems = [
+    'Бутылка воды',
+    'Сахарный сироп',
+    'Соль',
+    'Сыр',
+    'Молоко',
+    'Картофель',
+    'Кука-кула',
+    'Химикаты',
+    'Говядина',
+    'Пряные травы (Приправа)'
+  ];
+  const lowInventory = inventory.filter((item: any) => {
+    if (specialLowStockItems.includes(item.name)) {
+      return item.quantity < 50;
+    }
+    return item.quantity <= 15;
+  });
 
   // Generate chart data
   const last7Days = Array.from({length: 7}, (_, i) => {
