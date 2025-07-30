@@ -107,7 +107,7 @@ const FridgeModal: React.FC<FridgeModalProps> = ({ isOpen, onClose }) => {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/inventory/bulk-update`, {
+      const response = await fetch(createBusinessApiUrl('/inventory'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
