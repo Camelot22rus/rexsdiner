@@ -25,4 +25,6 @@ export interface OrdersSliceState {
   isOrderHistoryOpen: boolean;
   loading?: boolean;
   error?: string | null;
+  createOrderLoading: boolean;
+  createOrderError: string | null;
 }

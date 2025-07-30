@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { selectPizzaData } from "../redux/pizza/selectors";
 import { selectCart } from "../redux/cart/selectors";
-import { selectIsOrderHistoryOpen } from "../redux/orders/selectors";
+import { selectIsOrderHistoryOpen, selectCreateOrderLoading } from "../redux/orders/selectors";
 import { selectIsAuthenticated, selectUser } from "../redux/user/selectors";
 import { loadUserFromStorage, logoutUser } from "../redux/user/asyncActions";
 import {
@@ -33,6 +33,7 @@ const Employee: React.FC = () => {
   const isOrderHistoryOpen = useSelector(selectIsOrderHistoryOpen);
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const user = useSelector(selectUser);
+  const isCreateOrderLoading = useSelector(selectCreateOrderLoading);
 
   const [searchValue, setSearchValue] = React.useState("");
   const [isBottomBarCollapsed, setIsBottomBarCollapsed] = React.useState(true);
@@ -156,7 +157,7 @@ const Employee: React.FC = () => {
   };
 
   const onCompleteOrder = async () => {
-    if (totalCount > 0) {
+    if (totalCount > 0 && !isCreateOrderLoading) {
       const orderData = {
         items: cartItems.filter((item) => item.count > 0),
         totalPrice,
@@ -521,12 +522,12 @@ const Employee: React.FC = () => {
           </div>
           <button
             className={`employee-complete-btn ${
-              totalCount === 0 ? "disabled" : ""
-            }`}
+              totalCount === 0 || isCreateOrderLoading ? "disabled" : ""
+            } ${isCreateOrderLoading ? "loading" : ""}`}
             onClick={onCompleteOrder}
-            disabled={totalCount === 0}
+            disabled={totalCount === 0 || isCreateOrderLoading}
           >
-            Добавить в заказ
+            {isCreateOrderLoading ? "Добавляем в заказ..." : "Добавить в заказ"}
           </button>
         </div>
       </div>

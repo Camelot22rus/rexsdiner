@@ -7,6 +7,8 @@ const initialState: OrdersSliceState = {
   isOrderHistoryOpen: false,
   loading: false,
   error: null,
+  createOrderLoading: false,
+  createOrderError: null,
 };
 
 const ordersSlice = createSlice({
@@ -24,11 +26,24 @@ const ordersSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    // Create order cases
+    builder.addCase(createOrder.pending, (state) => {
+      state.createOrderLoading = true;
+      state.createOrderError = null;
+    });
     builder.addCase(createOrder.fulfilled, (state, action) => {
+      state.createOrderLoading = false;
+      state.createOrderError = null;
       if (action.payload) {
         state.orders.unshift(action.payload);
       }
     });
+    builder.addCase(createOrder.rejected, (state, action) => {
+      state.createOrderLoading = false;
+      state.createOrderError = action.error?.message || 'Failed to create order';
+    });
+    
+    // Fetch orders cases
     builder.addCase(fetchOrders.pending, (state) => {
       state.loading = true;
       state.error = null;
