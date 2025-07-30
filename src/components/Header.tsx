@@ -2,14 +2,23 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-import logoSvg from "../assets/img/rex-logo.png";
 import { Search } from "./";
+import BusinessSelector from "./BusinessSelector";
 import { selectCart } from "../redux/cart/selectors";
+import { useBusiness } from "../contexts/BusinessContext";
+import { getBusinessLogo, getBusinessName } from "../utils/getBusinessLogo";
 
 export const Header: React.FC = () => {
   const { items, totalPrice } = useSelector(selectCart);
   const location = useLocation();
   const isMounted = React.useRef(false);
+  const { currentBusiness, businessOptions } = useBusiness();
+  
+  // Get business configuration
+  const businessConfig = getBusinessLogo(currentBusiness);
+  
+  // Get business name with fallback
+  const businessName = getBusinessName(currentBusiness, businessOptions);
 
   const totalCount = items.reduce(
     (sum: number, item: any) => sum + item.count,
@@ -29,9 +38,11 @@ export const Header: React.FC = () => {
       <div className="container">
         <Link to="/">
           <div className="header__logo">
-            <img width="150" src={logoSvg} alt="Pizza logo" />
+            {businessConfig.logo && (
+              <img width="150" src={businessConfig.logo} alt={businessConfig.alt} />
+            )}
             <div>
-              <h1>Rex's Diner</h1>
+              <h1>{businessName}</h1>
               {/* <p>самая вкусная пицца во вселенной</p> */}
             </div>
           </div>
@@ -40,6 +51,14 @@ export const Header: React.FC = () => {
           <Search />
         )}
         <div className="header__cart">
+          {/* Business Selector - only show on main pages */}
+          {location.pathname !== "/cart" &&
+            location.pathname !== "/employee" && 
+            location.pathname !== "/employee/profile" && (
+              <div className="header__business-selector">
+                <BusinessSelector />
+              </div>
+            )}
           {location.pathname !== "/cart" &&
             location.pathname !== "/employee" && 
             location.pathname !== "/employee/profile" && (

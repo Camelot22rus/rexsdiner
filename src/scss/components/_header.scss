@@ -87,4 +87,14 @@
       }
     }
   }
+
+  &__business-selector {
+    display: flex;
+    align-items: center;
+    
+    @media (max-width: 767px) {
+      order: -1;
+      margin-bottom: 10px;
+    }
+  }
 }

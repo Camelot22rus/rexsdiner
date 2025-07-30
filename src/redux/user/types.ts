@@ -2,11 +2,13 @@ export interface User {
   id: number;
   name: string;
   role: "Admin" | "Employee";
+  businessId?: string; // Add business ID for multi-business support
 }
 
 export interface UserLoginRequest {
   id: number;
   pass: string;
+  businessId?: string; // Add business ID to login request
 }
 
 export interface UserLoginResponse {

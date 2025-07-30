@@ -16,6 +16,10 @@ const pizzaSlice = createSlice({
     setItems(state, action: PayloadAction<Pizza[]>) {
       state.items = action.payload;
     },
+    clearItems(state) {
+      state.items = [];
+      state.status = Status.LOADING;
+    },
   },
   extraReducers: (builder) => {
     // Handle API fetch
@@ -36,6 +40,6 @@ const pizzaSlice = createSlice({
   },
 });
 
-export const { setItems } = pizzaSlice.actions;
+export const { setItems, clearItems } = pizzaSlice.actions;
 
 export default pizzaSlice.reducer;

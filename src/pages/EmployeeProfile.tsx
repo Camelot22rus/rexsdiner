@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../redux/user/selectors";
 import { selectIsDarkMode } from "../redux/theme/selectors";
 import { API_BASE_URL } from '../config';
+import { createBusinessApiUrl, apiCall } from '../services/api';
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../redux/store";
 import { loadUserFromStorage } from "../redux/user/asyncActions";
@@ -158,23 +159,29 @@ const EmployeeProfile: React.FC = () => {
   useEffect(() => {
     if (!hasTriedAuth || !user) return;
 
-    // Fetch data from APIs
-    Promise.all([
-      fetch(`${API_BASE_URL}/orders`).then(r => r.json()),
-      fetch(`${API_BASE_URL}/inventory`).then(r => r.json()),
-      fetch(`${API_BASE_URL}/menu`).then(r => r.json()),
-      fetch(`${API_BASE_URL}/users`).then(r => r.json()),
-    ]).then(([ordersRes, inventoryRes, menuRes, usersRes]) => {
-      if (ordersRes.status === "success") setOrders(ordersRes.data || []);
-      if (inventoryRes.status === "success") setInventory(inventoryRes.data || []);
-      if (menuRes.status === "success") setMenu(menuRes.data || []);
-      if (usersRes.status === "success") setUsers(usersRes.data || []);
-      setLoading(false);
-    }).catch((err) => {
-      console.error("Error fetching data:", err);
-      setError("Ошибка загрузки данных");
-      setLoading(false);
-    });
+    // Fetch data from APIs using the new multi-business endpoints
+    const fetchData = async () => {
+      try {
+        const [ordersRes, inventoryRes, menuRes, usersRes] = await Promise.all([
+          apiCall<{status: string, data?: any[]}>('/orders'),
+          apiCall<{status: string, data?: any[]}>('/inventory'),
+          apiCall<{status: string, data?: any[]}>('/menu'),
+          apiCall<{status: string, data?: any[]}>('/users'),
+        ]);
+
+        if (ordersRes.status === "success") setOrders(ordersRes.data || []);
+        if (inventoryRes.status === "success") setInventory(inventoryRes.data || []);
+        if (menuRes.status === "success") setMenu(menuRes.data || []);
+        if (usersRes.status === "success") setUsers(usersRes.data || []);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError("Ошибка загрузки данных");
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, [hasTriedAuth, user]);
 
   if (!hasTriedAuth) {
@@ -296,9 +303,9 @@ const EmployeeProfile: React.FC = () => {
     <div className={`employee-profile ${isDarkMode ? 'dark-theme' : 'light-theme'}`}>
       <div className="container">
         <div className="employee-profile__header">
-          <h1 className="employee-profile__title">
-            Профиль сотрудника - {user.name} ({user.role})
-          </h1>
+                        <h1 className="employee-profile__title">
+                Профиль сотрудника - {user.name} ({user.role} - {user.businessId})
+              </h1>
         </div>
 
         {/* Stats Cards */}

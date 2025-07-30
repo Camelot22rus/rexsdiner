@@ -21,6 +21,8 @@ import FridgeModal from '../components/FridgeModal';
 import AvailabilityDot from '../components/AvailabilityDot';
 import Notification from '../components/Notification';
 import { API_BASE_URL } from '../config';
+import { createBusinessApiUrl } from '../services/api';
+import { clearItems as clearPizzaItems } from "../redux/pizza/slice";
 
 const Employee: React.FC = () => {
   const dispatch = useDispatch();
@@ -47,7 +49,7 @@ const Employee: React.FC = () => {
   React.useEffect(() => {
     setInventoryLoading(true);
     setInventoryError(null);
-    fetch(`${API_BASE_URL}/inventory`)
+    fetch(createBusinessApiUrl('/inventory'))
       .then((res) => res.json())
       .then((data) => {
         if (data.status === 'success') {
@@ -93,8 +95,13 @@ const Employee: React.FC = () => {
       );
     };
 
-    getPizzas();
-  }, [appDispatch]);
+    // Only load menu when user is authenticated
+    if (isAuthenticated) {
+      getPizzas();
+    } else {
+      appDispatch(clearPizzaItems()); // Clear menu data if user is not authenticated
+    }
+  }, [appDispatch, isAuthenticated]); // Add isAuthenticated as dependency
 
   const filteredItems = items.filter((item) =>
     item.name && item.name.toLowerCase().includes(searchValue.toLowerCase())
@@ -230,7 +237,7 @@ const Employee: React.FC = () => {
             {user && (
               <div className="employee-user-info">
                 <span className="employee-username">
-                  Добро пожаловать, {user.name} ({user.role})
+                  Добро пожаловать, {user.name} ({user.role} - {user.businessId})
                 </span>
                 <button
                   className="employee-profile-btn"

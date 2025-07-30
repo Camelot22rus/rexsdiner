@@ -8,6 +8,8 @@ import {
 import { loginUser } from "../../redux/user/asyncActions";
 import { clearError } from "../../redux/user/slice";
 import { useAppDispatch } from "../../redux/store";
+import { useBusiness } from "../../contexts/BusinessContext";
+import { DEFAULT_BUSINESS_ID } from "../../config";
 import styles from "./LoginModal.module.scss";
 
 interface LoginModalProps {
@@ -20,6 +22,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const appDispatch = useAppDispatch();
   const loading = useSelector(selectUserLoading);
   const error = useSelector(selectUserError);
+  const { businessOptions, isLoading: businessLoading } = useBusiness();
+  
   // Map backend error to Russian
   const displayError = error === 'Invalid credentials' ? 'Не правильный пароль' : error;
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -27,6 +31,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
     id: "",
     pass: "",
+    businessId: DEFAULT_BUSINESS_ID, // Default business from config
   });
 
   React.useEffect(() => {
@@ -45,6 +50,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
     }
   }, [error, dispatch]);
 
+  // Update form data when business options change
+  React.useEffect(() => {
+    if (businessOptions.length > 0 && !businessOptions.find(b => b.id === formData.businessId)) {
+      setFormData(prev => ({ ...prev, businessId: businessOptions[0].id }));
+    }
+  }, [businessOptions]);
+
   // Format as xxx-xxxx
   const formatEmployeeId = (value: string) => {
     const digits = value.replace(/\D/g, "").slice(0, 7);
@@ -55,7 +67,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   // Validate xxx-xxxx
   const isValidEmployeeId = (value: string) => /^\d{3}-\d{4}$/.test(value);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     if (name === "id") {
       const formatted = formatEmployeeId(value);
@@ -79,12 +91,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
       loginUser({
         id: parseInt(idTransformed),
         pass: formData.pass,
+        businessId: formData.businessId, // Include business ID
       })
     );
   };
 
   const handleClose = () => {
-    setFormData({ id: "", pass: "" });
+    setFormData({ id: "", pass: "", businessId: DEFAULT_BUSINESS_ID });
     dispatch(clearError());
     onClose();
   };
@@ -104,6 +117,24 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.inputGroup}>
+            <label htmlFor="business">Бизнес</label>
+            <select
+              id="business"
+              name="businessId"
+              value={formData.businessId}
+              onChange={handleInputChange}
+              disabled={loading || businessLoading}
+              required
+            >
+              {businessOptions.map((business) => (
+                <option key={business.id} value={business.id}>
+                  {business.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className={styles.inputGroup}>
             <label htmlFor="id">Номер телефона</label>
             <input

@@ -3,6 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
 import App from './App';
+import { BusinessProvider } from './contexts/BusinessContext';
 
 import { store } from './redux/store';
 
@@ -14,7 +15,9 @@ if (rootElem) {
   root.render(
     <BrowserRouter basename="/rexsdiner">
       <Provider store={store}>
-        <App />
+        <BusinessProvider>
+          <App />
+        </BusinessProvider>
       </Provider>
     </BrowserRouter>,
   );

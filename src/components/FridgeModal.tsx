@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { API_BASE_URL } from '../config';
+import { createBusinessApiUrl } from '../services/api';
 import { useSelector } from "react-redux";
 import { selectUser } from "../redux/user/selectors";
 import styles from './FridgeModal.module.scss';
@@ -29,7 +30,7 @@ const FridgeModal: React.FC<FridgeModalProps> = ({ isOpen, onClose }) => {
     if (!isOpen) return;
     setLoading(true);
     setError(null);
-    fetch(`${API_BASE_URL}/inventory`)
+    fetch(createBusinessApiUrl('/inventory'))
       .then((res) => res.json())
       .then((data) => {
         if (data.status === "success") {

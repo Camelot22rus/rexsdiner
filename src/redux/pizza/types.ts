@@ -33,6 +33,7 @@ export type SearchPizzaParams = {
   category: string;
   search: string;
   currentPage: string;
+  businessId?: string; // Add business ID for multi-business support
 };
 
 export interface PizzaSliceState {

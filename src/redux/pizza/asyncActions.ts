@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Pizza, MenuItem, SearchPizzaParams } from "./types";
 import { pickBy, identity } from "lodash";
-import { API_BASE_URL } from "../../config";
+import { API_BASE_URL, DEFAULT_BUSINESS_ID } from "../../config";
 
 // Helper function to convert MenuItem to Pizza format for compatibility
 export const convertMenuItemToPizza = (menuItem: MenuItem): Pizza => ({
@@ -26,15 +26,18 @@ export const fetchMenuItemsFromAPI = createAsyncThunk<
   MenuItem[],
   SearchPizzaParams
 >("menu/fetchMenuItemsFromAPIStatus", async (params) => {
-  const { sortBy, order, category, search } = params;
+  const { sortBy, order, category, search, businessId } = params;
 
   try {
-    // Fetch from backend API
+    // Get current business from localStorage or use default
+    const currentBusiness = businessId || localStorage.getItem("currentBusiness") || DEFAULT_BUSINESS_ID;
+    
+    // Fetch from backend API with business parameter
     const { data } = await axios.get<{
       status: string;
       message: string;
       data: MenuItem[];
-    }>(`${API_BASE_URL}/menu`);
+    }>(`${API_BASE_URL}/menu?business=${currentBusiness}`);
 
     let filteredData = [...data.data];
 
