@@ -27,6 +27,12 @@ export const BUSINESS_CONFIG = {
     alt: "Beam Machine",
     displayName: "Beam Machine"
   },
+  MPT: {
+    logo: '', // No logo for Beam Machine
+    name: "Mirror Park Tavern",
+    alt: "Mirror Park Tavern",
+    displayName: "Mirror Park Tavern"
+  },
   // Add more businesses as needed
   // Example for a second business:
   // 'BUSINESS2': {

@@ -5,20 +5,26 @@ import { useSelector } from "react-redux";
 import { Search } from "./";
 import BusinessSelector from "./BusinessSelector";
 import { selectCart } from "../redux/cart/selectors";
+import { selectUser } from "../redux/user/selectors";
 import { useBusiness } from "../contexts/BusinessContext";
 import { getBusinessLogo, getBusinessName } from "../utils/getBusinessLogo";
 
 export const Header: React.FC = () => {
   const { items, totalPrice } = useSelector(selectCart);
+  const user = useSelector(selectUser);
   const location = useLocation();
   const isMounted = React.useRef(false);
   const { currentBusiness, businessOptions } = useBusiness();
   
+  // Determine which business to use based on the page
+  const isEmployeePage = location.pathname.startsWith('/employee');
+  const businessToUse = isEmployeePage && user?.businessId ? user.businessId : currentBusiness;
+  
   // Get business configuration
-  const businessConfig = getBusinessLogo(currentBusiness);
+  const businessConfig = getBusinessLogo(businessToUse);
   
   // Get business name with fallback
-  const businessName = getBusinessName(currentBusiness, businessOptions);
+  const businessName = getBusinessName(businessToUse, businessOptions);
 
   const totalCount = items.reduce(
     (sum: number, item: any) => sum + item.count,
@@ -51,7 +57,7 @@ export const Header: React.FC = () => {
           <Search />
         )}
         <div className="header__cart">
-          {/* Business Selector - only show on main pages */}
+          {/* Business Selector - only show on main pages (not employee pages) */}
           {location.pathname !== "/cart" &&
             location.pathname !== "/employee" && 
             location.pathname !== "/employee/profile" && (
